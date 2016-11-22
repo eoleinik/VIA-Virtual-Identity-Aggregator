@@ -1,5 +1,6 @@
 package com.example.evgeniy.scanner;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -8,40 +9,45 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public void scanBarcodeCustomLayout(View view) {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setCaptureActivity(AnyOrientationCaptureActivity.class);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+        integrator.setPrompt("Scan something");
+        integrator.setOrientationLocked(false);
+        integrator.setBeepEnabled(true);
+        integrator.initiateScan();
+    }
+//
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Log.d("MainActivity", "Cancelled scan");
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Log.d("MainActivity", "Scanned");
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
-//    public void scanBarcodeCustomLayout(View view) {
-//        IntentIntegrator integrator = new IntentIntegrator(this);
-//        integrator.setCaptureActivity(AnyOrientationCaptureActivity.class);
-//        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-//        integrator.setPrompt("Scan something");
-//        integrator.setOrientationLocked(false);
-//        integrator.setBeepEnabled(true);
-//        integrator.initiateScan();
-//    }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//        if(result != null) {
-//            if(result.getContents() == null) {
-//                Log.d("MainActivity", "Cancelled scan");
-//                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-//            } else {
-//                Log.d("MainActivity", "Scanned");
-//                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-//            }
-//        } else {
-//            // This is important, otherwise the result will not be passed to the fragment
-//            super.onActivityResult(requestCode, resultCode, data);
-//        }
-//    }
-//
 //    protected void generateBarcode(View view) {
 //        Intent intent = new Intent(this, ShowGeneratedBarcode.class);
 //        startActivity(intent);
