@@ -25,7 +25,6 @@
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
             android:windowSoftInputMode="stateAlwaysHidden"></activity>
-        <activity android:name=".ShowGeneratedBarcode"></activity>
     </application>
 
 </manifest>

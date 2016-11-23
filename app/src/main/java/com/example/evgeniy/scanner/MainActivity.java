@@ -48,11 +48,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    protected void generateBarcode(View view) {
-//        Intent intent = new Intent(this, ShowGeneratedBarcode.class);
-//        startActivity(intent);
-//    }
-
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
