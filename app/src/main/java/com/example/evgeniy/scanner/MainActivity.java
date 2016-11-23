@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
         integrator.setPrompt("Scan something");
         integrator.setOrientationLocked(false);
-        integrator.setBeepEnabled(true);
+        integrator.setBeepEnabled(false);
         integrator.initiateScan();
     }
 //

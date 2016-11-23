@@ -79,6 +79,7 @@
                 android:id="@+id/textView2"
                 android:layout_width="38dp"
                 android:layout_height="wrap_content"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_gravity="end|center_vertical"
                 android:background="@color/colorPrimary"
                 android:text="Scan" />
