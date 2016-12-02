@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.TextView;
 
 public class MyProfileFragment extends Fragment{
 
@@ -17,10 +17,17 @@ public class MyProfileFragment extends Fragment{
         Person person = PersonContract.getProfile(getActivity().getApplicationContext());
         if (person == null)
             return;
-        ((EditText) v.findViewById(R.id.editTextFirstName)).setText(person.getFirstName());
-        ((EditText) v.findViewById(R.id.editTextLastName)).setText(person.getLastName());
-        ((EditText) v.findViewById(R.id.editTextEmail)).setText(person.getEmail());
-        ((EditText) v.findViewById(R.id.editTextPhone)).setText(person.getPhone());
+
+        v.findViewById(R.id.linerLayoutView).setVisibility(View.VISIBLE);
+        v.findViewById(R.id.linerLayoutEdit).setVisibility(View.INVISIBLE);
+
+        v.findViewById(R.id.buttonEdit).setVisibility(View.VISIBLE);
+        v.findViewById(R.id.buttonSave).setVisibility(View.INVISIBLE);
+
+        ((TextView) v.findViewById(R.id.textViewFirstName)).setText(person.getFirstName());
+        ((TextView) v.findViewById(R.id.textViewLastName)).setText(person.getLastName());
+        ((TextView) v.findViewById(R.id.textViewEmail)).setText(person.getEmail());
+        ((TextView) v.findViewById(R.id.textViewPhone)).setText(person.getPhone());
     }
 
 

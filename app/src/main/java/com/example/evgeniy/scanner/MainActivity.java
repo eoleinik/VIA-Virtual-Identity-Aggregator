@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         integrator.initiateScan();
     }
 
+    //region  Profile fragment
     public void onSaveClick(View view) {
         String firstName = ((TextView) findViewById(R.id.editTextFirstName)).getText().toString();
         String lastName = ((TextView) findViewById(R.id.editTextLastName)).getText().toString();
@@ -54,6 +55,35 @@ public class MainActivity extends AppCompatActivity {
         PersonContract.SaveProfile(getApplicationContext(), person);
 
         saveProfileRemote(person);
+
+        ((TextView) findViewById(R.id.textViewFirstName)).setText(firstName);
+        ((TextView) findViewById(R.id.textViewLastName)).setText(lastName);
+        ((TextView) findViewById(R.id.textViewEmail)).setText(email);
+        ((TextView) findViewById(R.id.textViewPhone)).setText(phone);
+
+        findViewById(R.id.linerLayoutView).setVisibility(View.VISIBLE);
+        findViewById(R.id.linerLayoutEdit).setVisibility(View.INVISIBLE);
+
+        findViewById(R.id.buttonEdit).setVisibility(View.VISIBLE);
+        findViewById(R.id.buttonSave).setVisibility(View.INVISIBLE);
+    }
+
+    public void onEditClick(View view) {
+        String firstName = ((TextView) findViewById(R.id.textViewFirstName)).getText().toString();
+        String lastName = ((TextView) findViewById(R.id.textViewLastName)).getText().toString();
+        String email = ((TextView) findViewById(R.id.textViewEmail)).getText().toString();
+        String phone = ((TextView) findViewById(R.id.textViewPhone)).getText().toString();
+
+        ((TextView) findViewById(R.id.editTextFirstName)).setText(firstName);
+        ((TextView) findViewById(R.id.editTextLastName)).setText(lastName);
+        ((TextView) findViewById(R.id.editTextEmail)).setText(email);
+        ((TextView) findViewById(R.id.editTextPhone)).setText(phone);
+
+        findViewById(R.id.linerLayoutView).setVisibility(View.INVISIBLE);
+        findViewById(R.id.linerLayoutEdit).setVisibility(View.VISIBLE);
+
+        findViewById(R.id.buttonEdit).setVisibility(View.INVISIBLE);
+        findViewById(R.id.buttonSave).setVisibility(View.VISIBLE);
     }
 
     private void saveProfileRemote(Person person) {
@@ -79,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 });
         queue.add(stringRequest);*/
     }
+    //endregion
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
