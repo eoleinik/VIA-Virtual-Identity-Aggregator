@@ -36,24 +36,18 @@ final class PersonContract {
     }
 
     static int AddContact(Context context, Person person) {
+        if (person.getId() == -1)
+            return -1;
+
         Boolean profileExists = false;
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String[] projection = {PersonEntry._ID};
 
-        String selection =
-                PersonEntry.COLUMN_NAME_FIRSTNAME + " = ? AND " +
-                        PersonEntry.COLUMN_NAME_LASTNAME + " = ? AND " +
-                        PersonEntry.COLUMN_NAME_EMAIL + " = ? AND " +
-                        PersonEntry.COLUMN_NAME_PHONE + " = ?";
+        String selection = PersonEntry.COLUMN_NAME_CONTACT_ID + " = ?";
 
-        String[] selectionArgs = {
-                person.getFirstName(),
-                person.getLastName(),
-                person.getEmail(),
-                person.getPhone()
-        };
+        String[] selectionArgs = {Integer.toString(person.getId())};
 
         Cursor c = db.query(
                 PersonEntry.CONTACTS_TABLE_NAME,
@@ -85,9 +79,6 @@ final class PersonContract {
     }
 
     static int getContactId(Context context, Person person) {
-        if (person.getId() == -1)
-            return -1;
-
         Boolean profileExists = false;
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -129,6 +120,9 @@ final class PersonContract {
     }
 
     static int updateContact(Context context, Person person, int contactId) {
+        if (person.getId() == -1)
+            return -1;
+
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
