@@ -34,6 +34,116 @@ final class PersonContract {
     private PersonContract() {
     }
 
+    static int AddContact(Context context, Person person) {
+        Boolean profileExists = false;
+        DbHelper dbHelper = new DbHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] projection = {PersonEntry._ID};
+
+        String selection =
+                PersonEntry.COLUMN_NAME_FIRSTNAME + " = ? AND " +
+                        PersonEntry.COLUMN_NAME_LASTNAME + " = ? AND " +
+                        PersonEntry.COLUMN_NAME_EMAIL + " = ? AND " +
+                        PersonEntry.COLUMN_NAME_PHONE + " = ?";
+
+        String[] selectionArgs = {
+                person.getFirstName(),
+                person.getLastName(),
+                person.getEmail(),
+                person.getPhone()
+        };
+
+        Cursor c = db.query(
+                PersonEntry.CONTACTS_TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if (c.moveToFirst())
+            profileExists = true;
+
+        c.close();
+
+        if (profileExists)
+            return -1;
+
+        ContentValues values = new ContentValues();
+        values.put(PersonEntry.COLUMN_NAME_FIRSTNAME, person.getFirstName());
+        values.put(PersonEntry.COLUMN_NAME_LASTNAME, person.getLastName());
+        values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
+        values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
+        values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
+
+        return (int) db.insert(PersonEntry.CONTACTS_TABLE_NAME, null, values);
+    }
+
+    static int getContactId(Context context, Person person) {
+        Boolean profileExists = false;
+        DbHelper dbHelper = new DbHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] projection = {PersonEntry._ID};
+
+        String selection =
+                PersonEntry.COLUMN_NAME_FIRSTNAME + " = ? AND " +
+                        PersonEntry.COLUMN_NAME_LASTNAME + " = ? AND " +
+                        PersonEntry.COLUMN_NAME_EMAIL + " = ? AND " +
+                        PersonEntry.COLUMN_NAME_PHONE + " = ?";
+
+        String[] selectionArgs = {
+                person.getFirstName(),
+                person.getLastName(),
+                person.getEmail(),
+                person.getPhone()
+        };
+
+        Cursor c = db.query(
+                PersonEntry.CONTACTS_TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if (c.moveToFirst())
+            profileExists = true;
+
+        c.close();
+
+        if (profileExists)
+            return c.getInt(c.getColumnIndexOrThrow(PersonEntry._ID));
+        else
+            return -1;
+    }
+
+    static int updateContact(Context context, Person person, int id) {
+        DbHelper dbHelper = new DbHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PersonEntry.COLUMN_NAME_FIRSTNAME, person.getFirstName());
+        values.put(PersonEntry.COLUMN_NAME_LASTNAME, person.getLastName());
+        values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
+        values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
+        values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
+
+        String selection = PersonEntry._ID + " = ?";
+        String[] selectionArgs = {Integer.toString(id)};
+
+        return db.update(
+                PersonEntry.CONTACTS_TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+    }
+
     static void SaveProfile(Context context, Person person) {
         Boolean profileExists = false;
         DbHelper dbHelper = new DbHelper(context);
@@ -80,7 +190,7 @@ final class PersonContract {
             );
     }
 
-    public static Person getProfile(Context context) {
+    static Person getProfile(Context context) {
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
