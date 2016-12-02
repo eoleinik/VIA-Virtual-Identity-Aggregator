@@ -1,6 +1,7 @@
 package com.example.evgeniy.scanner;
 
 class Person {
+    private int id = -1;
     private String firstName;
     private String lastName;
     private String phone;
@@ -13,6 +14,14 @@ class Person {
         this.phone = phone;
         this.email = email;
         this.address = address;
+    }
+
+    int getId() {
+        return id;
+    }
+
+    void setId(int id) {
+        this.id = id;
     }
 
     String getFirstName() {

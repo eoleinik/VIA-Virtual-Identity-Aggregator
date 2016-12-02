@@ -25,6 +25,7 @@ final class PersonContract {
                     PersonEntry.COLUMN_NAME_ADDRESS + " TEXT," +
                     PersonEntry.COLUMN_NAME_EMAIL + " TEXT," +
                     PersonEntry.COLUMN_NAME_PHONE + " TEXT," +
+                    PersonEntry.COLUMN_NAME_CONTACT_ID + " INTEGER, " +
                     PersonEntry.COLUMN_NAME_PICTURE + " BLOB)";
     private static final String SQL_DELETE_PROFILE =
             "DROP TABLE IF EXISTS " + PersonEntry.PROFILE_TABLE_NAME;
@@ -78,16 +79,20 @@ final class PersonContract {
         values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
         values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
         values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
+        values.put(PersonEntry.COLUMN_NAME_CONTACT_ID, person.getId());
 
         return (int) db.insert(PersonEntry.CONTACTS_TABLE_NAME, null, values);
     }
 
     static int getContactId(Context context, Person person) {
+        if (person.getId() == -1)
+            return -1;
+
         Boolean profileExists = false;
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String[] projection = {PersonEntry._ID};
+        String[] projection = {PersonEntry.COLUMN_NAME_CONTACT_ID};
 
         String selection =
                 PersonEntry.COLUMN_NAME_FIRSTNAME + " = ? AND " +
@@ -118,12 +123,12 @@ final class PersonContract {
         c.close();
 
         if (profileExists)
-            return c.getInt(c.getColumnIndexOrThrow(PersonEntry._ID));
+            return c.getInt(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_CONTACT_ID));
         else
             return -1;
     }
 
-    static int updateContact(Context context, Person person, int id) {
+    static int updateContact(Context context, Person person, int contactId) {
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -134,8 +139,8 @@ final class PersonContract {
         values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
         values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
 
-        String selection = PersonEntry._ID + " = ?";
-        String[] selectionArgs = {Integer.toString(id)};
+        String selection = PersonEntry.COLUMN_NAME_CONTACT_ID + " = ?";
+        String[] selectionArgs = {Integer.toString(contactId)};
 
         return db.update(
                 PersonEntry.CONTACTS_TABLE_NAME,
@@ -235,11 +240,12 @@ final class PersonContract {
         static final String COLUMN_NAME_EMAIL = "email";
         static final String COLUMN_NAME_ADDRESS = "address";
         static final String COLUMN_NAME_PICTURE = "picture";
+        static final String COLUMN_NAME_CONTACT_ID = "contactId";
     }
 
     private static class DbHelper extends SQLiteOpenHelper {
         // If schema is changed, update this DB version!
-        static final int DATABASE_VERSION = 1;
+        static final int DATABASE_VERSION = 2;
         static final String DATABASE_NAME = "Local.db";
 
         DbHelper(Context context) {
