@@ -102,11 +102,14 @@ public class MainActivity extends AppCompatActivity {
         String email = ((TextView) findViewById(R.id.editTextEmail)).getText().toString();
         String phone = ((TextView) findViewById(R.id.editTextPhone)).getText().toString();
 
+
         Person person = new Person(ts, firstName, lastName, phone, email, "");
         // Save profile to local sqlite db
         PersonContract.saveProfile(getApplicationContext(), person);
 
         saveProfileRemote(person);
+
+        QRGenerator.generateAndSave(person, getString(R.string.my_qr_code), getApplicationContext());
 
         ((TextView) findViewById(R.id.textViewFirstName)).setText(firstName);
         ((TextView) findViewById(R.id.textViewLastName)).setText(lastName);
@@ -155,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("MyApp", error.getMessage());
                     }
                 });
+
         queue.add(stringRequest);
     }
     //endregion
@@ -200,6 +204,9 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
+
+        viewPager.setCurrentItem(1);
+
     }
 
     private void setupTabIcons() {
