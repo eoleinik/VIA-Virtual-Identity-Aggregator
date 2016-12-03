@@ -15,6 +15,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -45,14 +51,16 @@ public class MainActivity extends AppCompatActivity {
 
     //region  Profile fragment
     public void onSaveClick(View view) {
+        Long tsLong = System.currentTimeMillis() / 1000;
+        String ts = tsLong.toString();
         String firstName = ((TextView) findViewById(R.id.editTextFirstName)).getText().toString();
         String lastName = ((TextView) findViewById(R.id.editTextLastName)).getText().toString();
         String email = ((TextView) findViewById(R.id.editTextEmail)).getText().toString();
         String phone = ((TextView) findViewById(R.id.editTextPhone)).getText().toString();
 
-        Person person = new Person(firstName, lastName, phone, email, "");
+        Person person = new Person(ts, firstName, lastName, phone, email, "");
         // Save profile to local sqlite db
-        PersonContract.SaveProfile(getApplicationContext(), person);
+        PersonContract.saveProfile(getApplicationContext(), person);
 
         saveProfileRemote(person);
 
@@ -87,13 +95,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveProfileRemote(Person person) {
-        // TODO: Remote storage
-        /*String name = ((TextView) findViewById(R.id.editTextName)).getText().toString();
-        String email = ((TextView) findViewById(R.id.editTextEmail)).getText().toString();
-        String phone = ((TextView) findViewById(R.id.editTextPhone)).getText().toString();
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = String.format("http://api.a16_sd206.studev.groept.be/createPerson/%s/%s/%s/%s/%s/%s",
-                name, "", email, phone, "", "");
+                person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone(), "", "");
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -107,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("MyApp", error.getMessage());
                     }
                 });
-        queue.add(stringRequest);*/
+        queue.add(stringRequest);
     }
     //endregion
 
