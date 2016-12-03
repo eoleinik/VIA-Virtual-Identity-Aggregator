@@ -1,6 +1,14 @@
 package com.example.evgeniy.scanner;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -24,10 +32,12 @@ import com.android.volley.toolbox.Volley;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    public static boolean isConnected = false;
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -38,6 +48,40 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.person
 
     };
+    private BroadcastReceiver NetworkStatusReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            ConnectivityManager connMgr = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+            new CheckInternetTask().execute();
+        }
+    };
+
+    private void updateConnected() {
+        final TextView connectionStatusText = (TextView) findViewById(R.id.connectionStatus);
+
+        if (isConnected && connectionStatusText.getText().toString().equals(R.string.disconnected)) {
+            connectionStatusText.setText(getString(R.string.connected));
+            connectionStatusText.setBackgroundColor(getResources().getColor(R.color.colorConnected));
+            connectionStatusText.animate().alpha(0.0f).setStartDelay(1000).setDuration(500).setListener(
+                    new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            connectionStatusText.setVisibility(View.GONE);
+                        }
+                    });
+        } else if (!isConnected) {
+            connectionStatusText.setAlpha(1.0f);
+            connectionStatusText.setText(getString(R.string.disconnected));
+            connectionStatusText.setBackgroundColor(getResources().getColor(R.color.colorDisconnected));
+            connectionStatusText.setVisibility(View.VISIBLE);
+        }
+    }
 
     public void scanBarcodeCustomLayout(View view) {
         IntentIntegrator integrator = new IntentIntegrator(this);
@@ -137,6 +181,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        registerReceiver(NetworkStatusReceiver, new IntentFilter(
+                ConnectivityManager.CONNECTIVITY_ACTION));
+
+        new CheckInternetTask().execute();
+
 //        Topbar:
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -177,6 +226,23 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new ContactsFragment(), "CONTACTS");
         adapter.addFragment(new MyProfileFragment(), "MY PROFILE");
         viewPager.setAdapter(adapter);
+    }
+
+    private class CheckInternetTask extends AsyncTask<Void, Void, Boolean> {
+        protected Boolean doInBackground(Void... params) {
+            try {
+                InetAddress ip = InetAddress.getByName(getString(R.string.internet_test));
+                return !ip.equals("");
+
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        protected void onPostExecute(Boolean result) {
+            isConnected = result;
+            updateConnected();
+        }
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

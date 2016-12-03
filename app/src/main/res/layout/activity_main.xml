@@ -39,11 +39,11 @@
 
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -77,9 +77,9 @@
 
             <Button
                 android:id="@+id/textView2"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="38dp"
                 android:layout_height="wrap_content"
-                style="?android:attr/borderlessButtonStyle"
                 android:layout_gravity="end|center_vertical"
                 android:background="@color/colorPrimary"
                 android:text="Scan" />
@@ -88,16 +88,16 @@
                 android:id="@+id/targetPicture"
                 android:layout_width="48dp"
                 android:layout_height="match_parent"
-                android:scaleType="fitEnd"
-                android:clickable="true"
-                android:onClick="scanBarcodeCustomLayout"
-                android:focusable="false"
-                android:longClickable="false"
                 android:layout_gravity="end"
                 android:background="@color/colorPrimary"
+                android:clickable="true"
+                android:focusable="false"
+                android:longClickable="false"
+                android:onClick="scanBarcodeCustomLayout"
                 android:padding="5pt"
-                android:paddingStart="0pt"
                 android:paddingLeft="0pt"
+                android:paddingStart="0pt"
+                android:scaleType="fitEnd"
 
                 android:src="@drawable/target" />
         </LinearLayout>
@@ -111,13 +111,26 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabMode="fixed"
-            app:tabGravity="fill"/>
+            app:tabGravity="fill"
+            app:tabMode="fixed" />
+
+        <TextView
+            android:id="@+id/connectionStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:background="@color/colorDisconnected"
+            android:text="@string/disconnected"
+            android:textAlignment="center"
+            android:visibility="gone" />
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+    </android.support.v4.view.ViewPager>
 </android.support.design.widget.CoordinatorLayout>
