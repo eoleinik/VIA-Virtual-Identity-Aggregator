@@ -5,32 +5,25 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
+
+import java.util.ArrayList;
+import java.util.List;
 
 final class PersonContract {
-    private static final String SQL_CREATE_PROFILE =
-            "CREATE TABLE " + PersonEntry.PROFILE_TABLE_NAME + " (" +
-                    PersonEntry._ID + " INTEGER PRIMARY KEY," +
+    private static final String SQL_CREATE_PEOPLE =
+            "CREATE TABLE " + PersonEntry.PEOPLE_TABLE_NAME + " (" +
+                    PersonEntry.COLUMN_NAME_CONTACT_ID + " INTEGER PRIMARY KEY," +
+                    PersonEntry.COLUMN_NAME_IS_ME + " INTEGER DEFAULT 0," +
+                    PersonEntry.COLUMN_NAME_TIMESTAMP + " TEXT," +
                     PersonEntry.COLUMN_NAME_FIRSTNAME + " TEXT," +
                     PersonEntry.COLUMN_NAME_LASTNAME + " TEXT," +
                     PersonEntry.COLUMN_NAME_ADDRESS + " TEXT," +
                     PersonEntry.COLUMN_NAME_EMAIL + " TEXT," +
                     PersonEntry.COLUMN_NAME_PHONE + " TEXT," +
-                    PersonEntry.COLUMN_NAME_PICTURE + " BLOB)";
-    private static final String SQL_CREATE_CONTACTS =
-            "CREATE TABLE " + PersonEntry.CONTACTS_TABLE_NAME + " (" +
-                    PersonEntry._ID + " INTEGER PRIMARY KEY," +
-                    PersonEntry.COLUMN_NAME_FIRSTNAME + " TEXT," +
-                    PersonEntry.COLUMN_NAME_LASTNAME + " TEXT," +
-                    PersonEntry.COLUMN_NAME_ADDRESS + " TEXT," +
-                    PersonEntry.COLUMN_NAME_EMAIL + " TEXT," +
-                    PersonEntry.COLUMN_NAME_PHONE + " TEXT," +
-                    PersonEntry.COLUMN_NAME_CONTACT_ID + " INTEGER, " +
-                    PersonEntry.COLUMN_NAME_PICTURE + " BLOB)";
-    private static final String SQL_DELETE_PROFILE =
-            "DROP TABLE IF EXISTS " + PersonEntry.PROFILE_TABLE_NAME;
-    private static final String SQL_DELETE_CONTACTS =
-            "DROP TABLE IF EXISTS " + PersonEntry.CONTACTS_TABLE_NAME;
+                    PersonEntry.COLUMN_NAME_IMAGE_FILENAME + " BLOB)";
+
+    private static final String SQL_DELETE_PEOPLE =
+            "DROP TABLE IF EXISTS " + PersonEntry.PEOPLE_TABLE_NAME;
 
     private PersonContract() {
     }
@@ -43,14 +36,14 @@ final class PersonContract {
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String[] projection = {PersonEntry._ID};
+        String[] projection = {PersonEntry.COLUMN_NAME_FIRSTNAME};
 
         String selection = PersonEntry.COLUMN_NAME_CONTACT_ID + " = ?";
 
         String[] selectionArgs = {Integer.toString(person.getId())};
 
         Cursor c = db.query(
-                PersonEntry.CONTACTS_TABLE_NAME,
+                PersonEntry.PEOPLE_TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -75,48 +68,46 @@ final class PersonContract {
         values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
         values.put(PersonEntry.COLUMN_NAME_CONTACT_ID, person.getId());
 
-        return (int) db.insert(PersonEntry.CONTACTS_TABLE_NAME, null, values);
+        return (int) db.insert(PersonEntry.PEOPLE_TABLE_NAME, null, values);
     }
 
-    static int getContactId(Context context, Person person) {
-        Boolean profileExists = false;
+    static List<Person> getContacts(Context context, Person person) {
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String[] projection = {PersonEntry.COLUMN_NAME_CONTACT_ID};
-
-        String selection =
-                PersonEntry.COLUMN_NAME_FIRSTNAME + " = ? AND " +
-                        PersonEntry.COLUMN_NAME_LASTNAME + " = ? AND " +
-                        PersonEntry.COLUMN_NAME_EMAIL + " = ? AND " +
-                        PersonEntry.COLUMN_NAME_PHONE + " = ?";
-
-        String[] selectionArgs = {
-                person.getFirstName(),
-                person.getLastName(),
-                person.getEmail(),
-                person.getPhone()
+        String[] projection = {
+                PersonEntry.COLUMN_NAME_TIMESTAMP,
+                PersonEntry.COLUMN_NAME_FIRSTNAME,
+                PersonEntry.COLUMN_NAME_LASTNAME,
+                PersonEntry.COLUMN_NAME_PHONE,
+                PersonEntry.COLUMN_NAME_EMAIL,
+                PersonEntry.COLUMN_NAME_ADDRESS,
+                PersonEntry.COLUMN_NAME_CONTACT_ID
         };
 
+        String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
+        String[] selectionArgs = {"0"};
+        String sortOrder = PersonEntry.COLUMN_NAME_LASTNAME + " ASC";
+
         Cursor c = db.query(
-                PersonEntry.CONTACTS_TABLE_NAME,
+                PersonEntry.PEOPLE_TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
                 null,
                 null,
-                null
+                sortOrder
         );
 
-        if (c.moveToFirst())
-            profileExists = true;
+
+        List<Person> people = new ArrayList<>();
+
+        while (c.moveToNext()) {
+            people.add(getPersonFromCursor(c));
+        }
 
         c.close();
-
-        if (profileExists)
-            return c.getInt(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_CONTACT_ID));
-        else
-            return -1;
+        return people;
     }
 
     static int updateContact(Context context, Person person, int contactId) {
@@ -127,6 +118,7 @@ final class PersonContract {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(PersonEntry.COLUMN_NAME_TIMESTAMP, person.getTimestamp());
         values.put(PersonEntry.COLUMN_NAME_FIRSTNAME, person.getFirstName());
         values.put(PersonEntry.COLUMN_NAME_LASTNAME, person.getLastName());
         values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
@@ -137,21 +129,21 @@ final class PersonContract {
         String[] selectionArgs = {Integer.toString(contactId)};
 
         return db.update(
-                PersonEntry.CONTACTS_TABLE_NAME,
+                PersonEntry.PEOPLE_TABLE_NAME,
                 values,
                 selection,
                 selectionArgs);
     }
 
-    static void SaveProfile(Context context, Person person) {
+    static int saveProfile(Context context, Person person) {
         Boolean profileExists = false;
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String[] projection = {PersonEntry._ID};
+        String[] projection = {PersonEntry.PEOPLE_TABLE_NAME};
 
         Cursor c = db.query(
-                PersonEntry.PROFILE_TABLE_NAME,     // The table to query
+                PersonEntry.PEOPLE_TABLE_NAME,     // The table to query
                 projection,                         // Columns to return
                 null,                               // Columns for WHERE clause
                 null,                               // the values for WHERE clause
@@ -166,27 +158,30 @@ final class PersonContract {
         c.close();
 
         ContentValues values = new ContentValues();
+        values.put(PersonEntry.COLUMN_NAME_TIMESTAMP, person.getFirstName());
         values.put(PersonEntry.COLUMN_NAME_FIRSTNAME, person.getFirstName());
         values.put(PersonEntry.COLUMN_NAME_LASTNAME, person.getLastName());
         values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
         values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
         values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
 
-        String selection = PersonEntry._ID + " = ?";
+        String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
         String[] selectionArgs = {"1"};
 
-        if (profileExists)
-            db.update(
-                    PersonEntry.PROFILE_TABLE_NAME,
+        if (profileExists) {
+            return db.update(
+                    PersonEntry.PEOPLE_TABLE_NAME,
                     values,
                     selection,
                     selectionArgs);
-        else
-            db.insert(
-                    PersonEntry.PROFILE_TABLE_NAME,
+        } else {
+            values.put(PersonEntry.COLUMN_NAME_IS_ME, 1);
+            return (int) db.insert(
+                    PersonEntry.PEOPLE_TABLE_NAME,
                     null,
                     values
             );
+        }
     }
 
     static Person getProfile(Context context) {
@@ -194,19 +189,23 @@ final class PersonContract {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String[] projection = {
-                PersonEntry._ID,
+                PersonEntry.COLUMN_NAME_TIMESTAMP,
                 PersonEntry.COLUMN_NAME_FIRSTNAME,
                 PersonEntry.COLUMN_NAME_LASTNAME,
                 PersonEntry.COLUMN_NAME_PHONE,
                 PersonEntry.COLUMN_NAME_EMAIL,
-                PersonEntry.COLUMN_NAME_ADDRESS
+                PersonEntry.COLUMN_NAME_ADDRESS,
+                PersonEntry.COLUMN_NAME_CONTACT_ID
         };
 
+        String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
+        String[] selectionArgs = {"1"};
+
         Cursor c = db.query(
-                PersonEntry.PROFILE_TABLE_NAME,     // The table to query
+                PersonEntry.PEOPLE_TABLE_NAME,      // The table to query
                 projection,                         // Columns to return
-                null,                               // Columns for WHERE clause
-                null,                               // the values for WHERE clause
+                selection,                          // Columns for WHERE clause
+                selectionArgs,                      // the values for WHERE clause
                 null,                               // Don't group the rows
                 null,                               // Don't filter by row groups
                 null                                // The sort order
@@ -216,30 +215,39 @@ final class PersonContract {
         if (!c.moveToFirst())
             return null;
 
+        Person person = getPersonFromCursor(c);
+        c.close();
+        return person;
+    }
+
+    private static Person getPersonFromCursor(Cursor c) {
+        int id = c.getInt(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_CONTACT_ID));
+        String timestamp = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_TIMESTAMP));
         String firstName = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_FIRSTNAME));
         String lastName = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_LASTNAME));
         String phone = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_PHONE));
         String email = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_EMAIL));
         String address = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_ADDRESS));
-        c.close();
-        return new Person(firstName, lastName, phone, email, address);
+
+        return new Person(id, timestamp, firstName, lastName, phone, email, address);
     }
 
-    private static class PersonEntry implements BaseColumns {
-        static final String PROFILE_TABLE_NAME = "profile";
-        static final String CONTACTS_TABLE_NAME = "contacts";
+    private static class PersonEntry {
+        static final String PEOPLE_TABLE_NAME = "profile";
+        static final String COLUMN_NAME_IS_ME = "isMe";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
         static final String COLUMN_NAME_FIRSTNAME = "firstName";
         static final String COLUMN_NAME_LASTNAME = "lastName";
         static final String COLUMN_NAME_PHONE = "phone";
         static final String COLUMN_NAME_EMAIL = "email";
         static final String COLUMN_NAME_ADDRESS = "address";
-        static final String COLUMN_NAME_PICTURE = "picture";
+        static final String COLUMN_NAME_IMAGE_FILENAME = "imageFilename";
         static final String COLUMN_NAME_CONTACT_ID = "contactId";
     }
 
     private static class DbHelper extends SQLiteOpenHelper {
         // If schema is changed, update this DB version!
-        static final int DATABASE_VERSION = 2;
+        static final int DATABASE_VERSION = 3;
         static final String DATABASE_NAME = "Local.db";
 
         DbHelper(Context context) {
@@ -247,13 +255,11 @@ final class PersonContract {
         }
 
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(SQL_CREATE_PROFILE);
-            db.execSQL(SQL_CREATE_CONTACTS);
+            db.execSQL(SQL_CREATE_PEOPLE);
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL(SQL_DELETE_PROFILE);
-            db.execSQL(SQL_DELETE_CONTACTS);
+            db.execSQL(SQL_DELETE_PEOPLE);
             onCreate(db);
         }
     }

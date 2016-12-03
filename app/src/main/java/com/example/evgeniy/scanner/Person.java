@@ -2,13 +2,15 @@ package com.example.evgeniy.scanner;
 
 class Person {
     private int id = -1;
+    private String timestamp;
     private String firstName;
     private String lastName;
     private String phone;
     private String email;
     private String address;
 
-    Person(String firstName, String lastName, String phone, String email, String address) {
+    Person(String timestamp, String firstName, String lastName, String phone, String email, String address) {
+        this.timestamp = timestamp;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -16,8 +18,9 @@ class Person {
         this.address = address;
     }
 
-    Person(int id, String firstName, String lastName, String phone, String email, String address) {
+    Person(int id, String timestamp, String firstName, String lastName, String phone, String email, String address) {
         this.id = id;
+        this.timestamp = timestamp;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -31,6 +34,10 @@ class Person {
 
     void setId(int id) {
         this.id = id;
+    }
+
+    String getTimestamp() {
+        return timestamp;
     }
 
     String getFirstName() {
