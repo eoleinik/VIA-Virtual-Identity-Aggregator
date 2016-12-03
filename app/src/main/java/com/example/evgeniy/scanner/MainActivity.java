@@ -23,12 +23,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -46,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.qr_code,
             R.drawable.contacts,
             R.drawable.person
-
     };
     private BroadcastReceiver NetworkStatusReceiver = new BroadcastReceiver() {
 
@@ -105,11 +98,10 @@ public class MainActivity extends AppCompatActivity {
 
         Person person = new Person(ts, firstName, lastName, phone, email, "");
         // Save profile to local sqlite db
-        PersonContract.saveProfile(getApplicationContext(), person);
+        // Probably do it through DBHandler, because we might have a chance to save ID as well.
+//        PersonContract.saveProfile(getApplicationContext(), person);
 
-        DBHandler.saveProfileRemote(person, this);
-
-        QRGenerator.generateAndSave(person, getString(R.string.my_qr_code), getApplicationContext());
+        DBHandler.saveProfile(person, this);
 
         ((TextView) findViewById(R.id.textViewFirstName)).setText(firstName);
         ((TextView) findViewById(R.id.textViewLastName)).setText(lastName);

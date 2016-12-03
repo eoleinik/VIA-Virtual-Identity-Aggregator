@@ -159,6 +159,7 @@ final class PersonContract {
         c.close();
 
         ContentValues values = new ContentValues();
+        values.put(PersonEntry.COLUMN_NAME_CONTACT_ID, person.getId());
         values.put(PersonEntry.COLUMN_NAME_TIMESTAMP, person.getFirstName());
         values.put(PersonEntry.COLUMN_NAME_FIRSTNAME, person.getFirstName());
         values.put(PersonEntry.COLUMN_NAME_LASTNAME, person.getLastName());
@@ -168,6 +169,8 @@ final class PersonContract {
 
         String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
         String[] selectionArgs = {"1"};
+
+        QRGenerator.generateAndSave(person, context.getString(R.string.my_qr_code), context);
 
         if (profileExists) {
             return db.update(

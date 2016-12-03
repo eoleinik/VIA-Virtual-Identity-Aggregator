@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/first_name"
+            android:hint="@string/last_name"
             android:inputType="textPersonName" />
 
         <EditText
