@@ -140,7 +140,7 @@ final class PersonContract {
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String[] projection = {PersonEntry.PEOPLE_TABLE_NAME};
+        String[] projection = {PersonEntry.COLUMN_NAME_FIRSTNAME};
 
         Cursor c = db.query(
                 PersonEntry.PEOPLE_TABLE_NAME,     // The table to query
