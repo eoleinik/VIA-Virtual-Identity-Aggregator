@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         // Save profile to local sqlite db
         PersonContract.saveProfile(getApplicationContext(), person);
 
-        saveProfileRemote(person);
+        DBHandler.saveProfileRemote(person, this);
 
         QRGenerator.generateAndSave(person, getString(R.string.my_qr_code), getApplicationContext());
 
@@ -95,27 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.buttonEdit).setVisibility(View.INVISIBLE);
         findViewById(R.id.buttonSave).setVisibility(View.VISIBLE);
-    }
-
-    private void saveProfileRemote(Person person) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = String.format("http://api.a16_sd206.studev.groept.be/createPerson/%s/%s/%s/%s/%s/%s",
-                person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone(), "", "");
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("MyApp", response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("MyApp", error.getMessage());
-                    }
-                });
-
-        queue.add(stringRequest);
     }
     //endregion
 
