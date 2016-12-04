@@ -29,7 +29,7 @@ final class PersonContract {
     private PersonContract() {
     }
 
-    static int AddContact(Context context, Person person) {
+    static int addContact(Context context, Person person) {
         if (person.getId() == -1)
             return -1;
 
