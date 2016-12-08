@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ScrollingProfileActivity extends AppCompatActivity {
@@ -23,13 +24,41 @@ public class ScrollingProfileActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        TextView phoneNumber = (TextView) findViewById(R.id.phone_number);
-        phoneNumber.setText(person.getPhone());
-
-        TextView emailAddress = (TextView) findViewById(R.id.email_address);
-        emailAddress.setText(person.getEmail());
-
         setTitle(person.getFullName());
+
+        // Phone
+        String phone = person.getPhone();
+        LinearLayout phoneBlock = (LinearLayout) findViewById(R.id.phone_block);
+        if (phone != null && !phone.equals("")) {
+            TextView phoneView = (TextView) findViewById(R.id.phone_number);
+            phoneView.setText(phone);
+            phoneBlock.setVisibility(View.VISIBLE);
+        } else {
+            phoneBlock.setVisibility(View.GONE);
+        }
+
+        // Email
+        String email = person.getEmail();
+        LinearLayout emailBlock = (LinearLayout) findViewById(R.id.email_block);
+        if (email != null && !email.equals("")) {
+            TextView emailView = (TextView) findViewById(R.id.email_address);
+            emailView.setText(email);
+            emailBlock.setVisibility(View.VISIBLE);
+        } else {
+            emailBlock.setVisibility(View.GONE);
+        }
+
+        // Address
+        String address = person.getAddress();
+        LinearLayout addressBlock = (LinearLayout) findViewById(R.id.address_block);
+        if (address != null && !address.equals("")) {
+            TextView addressView = (TextView) findViewById(R.id.address);
+            addressView.setText(address);
+            addressBlock.setVisibility(View.VISIBLE);
+        } else {
+            addressBlock.setVisibility(View.GONE);
+        }
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

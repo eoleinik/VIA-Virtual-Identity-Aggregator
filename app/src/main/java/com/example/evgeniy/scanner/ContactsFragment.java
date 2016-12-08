@@ -36,8 +36,8 @@ public class ContactsFragment extends Fragment{
 
         contactsView = (ListView) view.findViewById(R.id.contactsList);
 
-        Person p1 = new Person("", "Jack", "Sparrow", "000", "js@mail.com", "addr");
-        Person p2 = new Person("", "Queen", "Elizabeth", "111", "qe@mail.com", "Buckingham palace");
+        Person p1 = new Person("", "Jack", "Sparrow", "000", null, "Black Pearl, Cuba");
+        Person p2 = new Person("", "Queen", "Elizabeth", null, "qe@mail.com", "Buckingham palace");
 
         personList.add(p1);
         personList.add(p2);
