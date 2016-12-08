@@ -63,6 +63,10 @@ class Person implements Parcelable {
         return address;
     }
 
+    String getFullName() {
+        return getFirstName()+" "+getLastName();
+    }
+
     // Parcel stuff
 
     @Override

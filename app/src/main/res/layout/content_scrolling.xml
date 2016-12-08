@@ -24,36 +24,36 @@
             android:padding="@dimen/activity_horizontal_margin">
 
             <ImageView
-                android:id="@+id/ivContactItem1"
-                android:layout_width="5dp"
-                android:layout_height="5dp"
+                android:id="@+id/phone_picture"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/qr_code" />
+                android:src="@android:drawable/stat_sys_phone_call" />
 
             <TextView
-                android:id="@+id/tvNumber1"
+                android:id="@+id/phone_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_toEndOf="@id/ivContactItem1"
-                android:layout_toRightOf="@id/ivContactItem1"
-                android:text="(123) 456-7890"
+                android:layout_toEndOf="@id/phone_picture"
+                android:layout_toRightOf="@id/phone_picture"
+                android:text=""
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#212121" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tvNumber1"
+                android:layout_below="@id/phone_number"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@id/ivContactItem1"
-                android:layout_toRightOf="@id/ivContactItem1"
-                android:text="Home"
+                android:layout_toEndOf="@id/phone_picture"
+                android:layout_toRightOf="@id/phone_picture"
+                android:text="Phone"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="#727272" />
 
@@ -85,40 +85,40 @@
             android:padding="@dimen/activity_horizontal_margin">
 
             <ImageView
-                android:id="@+id/ivContactItem3"
-                android:layout_width="5dp"
-                android:layout_height="5dp"
+                android:id="@+id/email"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/person" />
+                android:src="@android:drawable/ic_dialog_email" />
 
             <TextView
-                android:id="@+id/tvNumber3"
+                android:id="@+id/email_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_toEndOf="@id/ivContactItem3"
+                android:layout_toEndOf="@id/email"
                 android:layout_toLeftOf="@+id/chkState3"
-                android:layout_toRightOf="@id/ivContactItem3"
+                android:layout_toRightOf="@id/email"
                 android:layout_toStartOf="@+id/chkState3"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="chintan@letsnurture.com"
+                android:text=""
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#212121" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tvNumber3"
+                android:layout_below="@id/email_address"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@id/ivContactItem3"
-                android:layout_toRightOf="@id/ivContactItem3"
-                android:text="Home"
+                android:layout_toEndOf="@id/email"
+                android:layout_toRightOf="@id/email"
+                android:text="Email"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="#727272" />
 

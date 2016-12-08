@@ -47,7 +47,7 @@ public class ContactAdapter extends BaseAdapter {
 
         Person person = (Person) getItem(position);
 
-        titleTextView.setText(person.getFirstName()+" "+person.getLastName());
+        titleTextView.setText(person.getFullName());
         subtitleTextView.setText(person.getPhone());
         thumbnailImageView.setImageResource(R.drawable.dicaprio);
 
