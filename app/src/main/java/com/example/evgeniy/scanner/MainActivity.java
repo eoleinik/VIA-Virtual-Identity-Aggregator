@@ -7,13 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -41,15 +41,10 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.contacts,
             R.drawable.person
     };
-    private BroadcastReceiver NetworkStatusReceiver = new BroadcastReceiver() {
 
+    private BroadcastReceiver NetworkStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            ConnectivityManager connMgr = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
             new CheckInternetTask().execute();
         }
     };
@@ -57,9 +52,11 @@ public class MainActivity extends AppCompatActivity {
     private void updateConnected() {
         final TextView connectionStatusText = (TextView) findViewById(R.id.connectionStatus);
 
-        if (isConnected && connectionStatusText.getText().toString().equals(R.string.disconnected)) {
+        if (isConnected) {
+            if (!connectionStatusText.getText().toString().equals(getString(R.string.disconnected)))
+                return;
             connectionStatusText.setText(getString(R.string.connected));
-            connectionStatusText.setBackgroundColor(getResources().getColor(R.color.colorConnected));
+            connectionStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.colorConnected));
             connectionStatusText.animate().alpha(0.0f).setStartDelay(1000).setDuration(500).setListener(
                     new AnimatorListenerAdapter() {
                         @Override
@@ -68,10 +65,10 @@ public class MainActivity extends AppCompatActivity {
                             connectionStatusText.setVisibility(View.GONE);
                         }
                     });
-        } else if (!isConnected) {
+        } else {
             connectionStatusText.setAlpha(1.0f);
             connectionStatusText.setText(getString(R.string.disconnected));
-            connectionStatusText.setBackgroundColor(getResources().getColor(R.color.colorDisconnected));
+            connectionStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.colorConnected));
             connectionStatusText.setVisibility(View.VISIBLE);
         }
     }
@@ -132,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.buttonEdit).setVisibility(View.INVISIBLE);
         findViewById(R.id.buttonSave).setVisibility(View.VISIBLE);
     }
-    //endregion
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -150,17 +146,16 @@ public class MainActivity extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        new CheckInternetTask().execute();
         registerReceiver(NetworkStatusReceiver, new IntentFilter(
                 ConnectivityManager.CONNECTIVITY_ACTION));
-
-        new CheckInternetTask().execute();
-
 //        Topbar:
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -210,9 +205,10 @@ public class MainActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... params) {
             try {
                 InetAddress ip = InetAddress.getByName(getString(R.string.internet_test));
-                return !ip.equals("");
+                return !ip.toString().equals("");
 
             } catch (Exception e) {
+                Log.d("MainActivity", e.getMessage());
                 return false;
             }
         }
