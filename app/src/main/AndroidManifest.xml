@@ -32,9 +32,13 @@
             android:theme="@style/zxing_CaptureTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
-        <activity android:name=".ContactDetailActivity"></activity>
-
-        <activity android:name=".ScrollingProfileActivity"></activity>
+        <activity android:name=".ScrollingProfileActivity"
+            android:parentActivityName=".MainActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
 
     </application>
 
