@@ -21,8 +21,8 @@ public class ScrollingProfileActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        String name = this.getIntent().getExtras().getString("name");
-        setTitle(name);
+        Person person = this.getIntent().getExtras().getParcelable("person");
+        setTitle(person.getFirstName());
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

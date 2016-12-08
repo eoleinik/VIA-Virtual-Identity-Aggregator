@@ -1,6 +1,9 @@
 package com.example.evgeniy.scanner;
 
-class Person {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+class Person implements Parcelable {
     private int id = -1;
     private String timestamp;
     private String firstName;
@@ -59,4 +62,44 @@ class Person {
     String getAddress() {
         return address;
     }
+
+    // Parcel stuff
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public Person(Parcel in) {
+        this.id = in.readInt();
+        this.timestamp = in.readString();
+        this.firstName = in.readString();
+        this.lastName = in.readString();
+        this.phone = in.readString();
+        this.email = in.readString();
+        this.address = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        // FIFO order
+        dest.writeInt(this.id);
+        dest.writeString(this.timestamp);
+        dest.writeString(this.firstName);
+        dest.writeString(this.lastName);
+        dest.writeString(this.phone);
+        dest.writeString(this.email);
+        dest.writeString(this.address);
+    }
+
+    public static final Parcelable.Creator CREATOR =
+        new Parcelable.Creator() {
+            public Person createFromParcel(Parcel in) {
+                return new Person(in);
+            }
+
+            public Person[] newArray(int size) {
+                return new Person[size];
+            }
+        };
 }

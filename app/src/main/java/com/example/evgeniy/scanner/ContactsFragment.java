@@ -50,7 +50,7 @@ public class ContactsFragment extends Fragment{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Person selectedPerson = personList.get(position);
                 Intent detailIntent = new Intent(view.getContext(), ScrollingProfileActivity.class);
-                detailIntent.putExtra("name", selectedPerson.getFirstName()+" "+selectedPerson.getLastName());
+                detailIntent.putExtra("person", selectedPerson);
                 startActivity(detailIntent);
             }
         });
