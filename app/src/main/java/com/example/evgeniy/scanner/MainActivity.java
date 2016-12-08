@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setCaptureActivity(AnyOrientationCaptureActivity.class);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-        integrator.setPrompt("Scan something");
+        integrator.setPrompt("Scan the other person's code");
         integrator.setOrientationLocked(false);
         integrator.setBeepEnabled(false);
         integrator.initiateScan();
