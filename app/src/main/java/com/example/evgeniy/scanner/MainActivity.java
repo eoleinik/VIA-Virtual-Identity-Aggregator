@@ -21,7 +21,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -134,12 +133,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
-            if(result.getContents() == null) {
-                Log.d("MainActivity", "Cancelled scan");
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-            } else {
+            if (result.getContents() != null) {
                 Log.d("MainActivity", "Scanned");
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                DBHandler.addContactFromJSON(result.getContents(), this);
             }
         } else {
             // This is important, otherwise the result will not be passed to the fragment
