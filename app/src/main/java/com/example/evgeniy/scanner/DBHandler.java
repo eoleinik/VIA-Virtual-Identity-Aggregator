@@ -33,7 +33,7 @@ public class DBHandler {
         // if no local ID
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = String.format("http://api.a16_sd206.studev.groept.be/createPerson/%s/%s/%s/%s/%s/%s",
-                person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone(), person.getAddress(), "");
+                person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone(), person.getAddress(), person.getPicture());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -94,7 +94,7 @@ public class DBHandler {
         // if no local ID
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = String.format("http://api.a16_sd206.studev.groept.be/updatePerson/%s/%s/%s/%s/%s/%s/%d",
-                newPerson.getFirstName(), newPerson.getLastName(), newPerson.getEmail(), newPerson.getPhone(), newPerson.getAddress(), "", oldPerson.getId());
+                newPerson.getFirstName(), newPerson.getLastName(), newPerson.getEmail(), newPerson.getPhone(), newPerson.getAddress(), newPerson.getPicture(), oldPerson.getId());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override

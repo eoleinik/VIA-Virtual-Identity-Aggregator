@@ -11,17 +11,19 @@ class Person implements Parcelable {
     private String phone;
     private String email;
     private String address;
+    private String picture;
 
-    Person(String timestamp, String firstName, String lastName, String phone, String email, String address) {
+    Person(String timestamp, String firstName, String lastName, String phone, String email, String address, String picture) {
         this.timestamp = timestamp;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.picture = picture;
     }
 
-    Person(int id, String timestamp, String firstName, String lastName, String phone, String email, String address) {
+    Person(int id, String timestamp, String firstName, String lastName, String phone, String email, String address, String picture) {
         this.id = id;
         this.timestamp = timestamp;
         this.firstName = firstName;
@@ -29,6 +31,7 @@ class Person implements Parcelable {
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.picture = picture;
     }
 
     int getId() {
@@ -63,6 +66,10 @@ class Person implements Parcelable {
         return address;
     }
 
+    String getPicture() {
+        return picture;
+    }
+
     String getFullName() {
         return getFirstName()+" "+getLastName();
     }
@@ -82,6 +89,7 @@ class Person implements Parcelable {
         this.phone = in.readString();
         this.email = in.readString();
         this.address = in.readString();
+        this.picture = in.readString();
     }
 
     @Override
@@ -94,6 +102,7 @@ class Person implements Parcelable {
         dest.writeString(this.phone);
         dest.writeString(this.email);
         dest.writeString(this.address);
+        dest.writeString(this.picture);
     }
 
     public static final Parcelable.Creator CREATOR =

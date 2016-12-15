@@ -234,7 +234,7 @@ final class PersonContract {
         String email = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_EMAIL));
         String address = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_ADDRESS));
 
-        return new Person(id, timestamp, firstName, lastName, phone, email, address);
+        return new Person(id, timestamp, firstName, lastName, phone, email, address, "");
     }
 
     private static class PersonEntry {

@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -36,8 +35,8 @@ public class ContactsFragment extends Fragment{
 
         contactsView = (ListView) view.findViewById(R.id.contactsList);
 
-        Person p1 = new Person("", "Jack", "Sparrow", "000", null, "Black Pearl, Cuba");
-        Person p2 = new Person("", "Queen", "Elizabeth", null, "qe@mail.com", "Buckingham palace");
+        Person p1 = new Person("", "Jack", "Sparrow", "000", null, "Black Pearl, Cuba", "");
+        Person p2 = new Person("", "Queen", "Elizabeth", null, "qe@mail.com", "Buckingham palace", "");
 
         personList.add(p1);
         personList.add(p2);
@@ -57,7 +56,5 @@ public class ContactsFragment extends Fragment{
 
         return view;
     }
-
-
 
 }
