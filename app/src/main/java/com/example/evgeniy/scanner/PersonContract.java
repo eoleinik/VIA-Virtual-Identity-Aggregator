@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +59,10 @@ final class PersonContract {
 
         c.close();
 
-        if (profileExists)
+        if (profileExists) {
+            Toast.makeText(context, "Contact already added!", Toast.LENGTH_LONG);
             return -1;
+        }
 
         ContentValues values = new ContentValues();
         values.put(PersonEntry.COLUMN_NAME_FIRSTNAME, person.getFirstName());
@@ -68,11 +71,12 @@ final class PersonContract {
         values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
         values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
         values.put(PersonEntry.COLUMN_NAME_CONTACT_ID, person.getId());
+        values.put(PersonEntry.COLUMN_NAME_IS_ME, 0);
 
         return (int) db.insert(PersonEntry.PEOPLE_TABLE_NAME, null, values);
     }
 
-    static List<Person> getContacts(Context context, Person person) {
+    static List<Person> getContacts(Context context) {
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -252,7 +256,7 @@ final class PersonContract {
 
     private static class DbHelper extends SQLiteOpenHelper {
         // If schema is changed, update this DB version!
-        static final int DATABASE_VERSION = 3;
+        static final int DATABASE_VERSION = 5;
         static final String DATABASE_NAME = "Local.db";
 
         DbHelper(Context context) {
