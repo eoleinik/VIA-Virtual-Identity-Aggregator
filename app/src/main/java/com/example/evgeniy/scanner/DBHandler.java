@@ -32,7 +32,7 @@ class DBHandler {
             String timestamp = jsonObject.getString("timestamp");
             // TODO: picture
             String picture = jsonObject.getString("picture");
-            return new Person(timestamp, firstName, lastName, phone, email, address);
+            return new Person(id, timestamp, firstName, lastName, phone, email, address);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -135,7 +135,9 @@ class DBHandler {
                             if (jArray.length() == 0)
                                 Toast.makeText(context, "Invalid QR code", Toast.LENGTH_LONG).show();
                             else {
-                                PersonContract.addContact(context, jsonToPerson(response));
+                                int res = PersonContract.addContact(context, jsonToPerson(response));
+                                if (res > 0)
+                                    ContactsFragment.update(context);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -192,8 +194,8 @@ class DBHandler {
         final Person temp_person = person;
         final Context temp_context = context;
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = String.format("http://api.a16_sd206.studev.groept.be/getPersonByAttributes/%s/%s/%s/%s/%s/%s",
-                person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone(), person.getAddress(), "");
+        String url = String.format("http://api.a16_sd206.studev.groept.be/getPersonByAttributes/%s/%s/%s/%s",
+                person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
