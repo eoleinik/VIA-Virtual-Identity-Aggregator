@@ -30,7 +30,7 @@ final class PersonContract {
     }
 
     static int addContact(Context context, Person person) {
-        if (person.getId() == -1)
+        if (person == null || person.getId() == -1)
             return -1;
 
         Boolean profileExists = false;
