@@ -36,8 +36,8 @@ public class ContactsFragment extends Fragment{
 
         contactsView = (ListView) view.findViewById(R.id.contactsList);
 
-        Person p1 = new Person("", "Jack", "Sparrow", "000", "js@mail.com", "addr");
-        Person p2 = new Person("", "Queen", "Elizabeth", "111", "qe@mail.com", "Buckingham palace");
+        Person p1 = new Person("", "Jack", "Sparrow", "000", null, "Black Pearl, Cuba");
+        Person p2 = new Person("", "Queen", "Elizabeth", null, "qe@mail.com", "Buckingham palace");
 
         personList.add(p1);
         personList.add(p2);
@@ -49,8 +49,8 @@ public class ContactsFragment extends Fragment{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Person selectedPerson = personList.get(position);
-                Intent detailIntent = new Intent(view.getContext(), ContactDetailActivity.class);
-                detailIntent.putExtra("name", selectedPerson.getFirstName()+" "+selectedPerson.getLastName());
+                Intent detailIntent = new Intent(view.getContext(), ScrollingProfileActivity.class);
+                detailIntent.putExtra("person", selectedPerson);
                 startActivity(detailIntent);
             }
         });
