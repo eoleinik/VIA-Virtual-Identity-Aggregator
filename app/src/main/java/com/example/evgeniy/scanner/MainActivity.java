@@ -6,9 +6,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,16 +25,32 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private InputStream myImageStream;
+
+    public InputStream getMyImageStream() {
+        return myImageStream;
+    }
+
+    public void setMyImageStream(InputStream imageStream) {
+        this.myImageStream = imageStream;
+    }
+
+    static final int SELECT_IMAGE_FROM_GALLERY = 1;
+
     public static boolean isConnected = false;
 
     private Toolbar toolbar;
@@ -91,8 +112,9 @@ public class MainActivity extends AppCompatActivity {
         String email = ((TextView) findViewById(R.id.editTextEmail)).getText().toString();
         String phone = ((TextView) findViewById(R.id.editTextPhone)).getText().toString();
 
-
-        Person person = new Person(ts, firstName, lastName, phone, email, "");
+        PhotoManager pm = new PhotoManager();
+        String imageUrl = pm.upload(this.getMyImageStream());
+        Person person = new Person(ts, firstName, lastName, phone, email, "", imageUrl);
         // Save profile to local sqlite db
         // Probably do it through DBHandler, because we might have a chance to save ID as well.
 //        PersonContract.saveProfile(getApplicationContext(), person);
@@ -129,18 +151,53 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.buttonSave).setVisibility(View.VISIBLE);
     }
 
+    public void openGallery(View view) {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,
+                "Select file to upload "), SELECT_IMAGE_FROM_GALLERY);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
-            if (result.getContents() != null) {
-                Log.d("MainActivity", "Scanned");
-                DBHandler.addContactFromJSON(result.getContents(), this);
+        if (requestCode == SELECT_IMAGE_FROM_GALLERY) {     // if we were choosing photo
+            if (resultCode == RESULT_OK) {
+                Uri selectedImageUri = data.getData();
+                try {
+                    InputStream myImage = getContentResolver().openInputStream(selectedImageUri);
+                    Bitmap bm2 = BitmapFactory.decodeStream(myImage);
+                    setMyImageStream(myImage);
+                    ImageView imagePreview = (ImageView)findViewById(R.id.imagePreview);
+                    imagePreview.setImageBitmap(bm2);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
-            // This is important, otherwise the result will not be passed to the fragment
-            super.onActivityResult(requestCode, resultCode, data);
+        } else {                                            // if we were scanning code
+            IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+            if (result != null) {
+                if (result.getContents() == null) {
+                    Log.d("MainActivity", "Cancelled scan");
+                    Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+                } else {
+                    Log.d("MainActivity", "Scanned");
+                    Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                }
+            } else {
+                // This is important, otherwise the result will not be passed to the fragment
+                super.onActivityResult(requestCode, resultCode, data);
+            }
         }
+    }
+
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        System.out.println("Column index: "+column_index);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
     //endregion
 

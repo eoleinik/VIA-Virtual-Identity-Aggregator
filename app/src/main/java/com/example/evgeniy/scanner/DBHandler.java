@@ -32,7 +32,8 @@ class DBHandler {
             String timestamp = jsonObject.getString("timestamp");
             // TODO: picture
             String picture = jsonObject.getString("picture");
-            return new Person(id, timestamp, firstName, lastName, phone, email, address);
+            return new Person(id, timestamp, firstName, lastName, phone, email, address, picture);
+
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -171,7 +172,7 @@ class DBHandler {
         // if no local ID
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = String.format("http://api.a16_sd206.studev.groept.be/createPerson/%s/%s/%s/%s/%s/%s",
-                person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone(), person.getAddress(), "");
+                person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone(), person.getAddress(), person.getPicture());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -231,8 +232,8 @@ class DBHandler {
         final Context temp_context = context;
         // if no local ID
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = String.format(Locale.UK, "http://api.a16_sd206.studev.groept.be/updatePerson/%s/%s/%s/%s/%s/%s/%d",
-                newPerson.getFirstName(), newPerson.getLastName(), newPerson.getEmail(), newPerson.getPhone(), newPerson.getAddress(), "", oldPerson.getId());
+        String url = String.format("http://api.a16_sd206.studev.groept.be/updatePerson/%s/%s/%s/%s/%s/%s/%d",
+                newPerson.getFirstName(), newPerson.getLastName(), newPerson.getEmail(), newPerson.getPhone(), newPerson.getAddress(), newPerson.getPicture(), oldPerson.getId());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
