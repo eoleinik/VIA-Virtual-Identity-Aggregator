@@ -26,6 +26,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +40,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private InputStream myImageStream;
+    private InputStream myImageStream = null;
 
     public InputStream getMyImageStream() {
         return myImageStream;
@@ -105,26 +106,35 @@ public class MainActivity extends AppCompatActivity {
 
     //region  Profile fragment
     public void onSaveClick(View view) {
+        if (this.getMyImageStream() != null) {
+            ProgressBar spinner = (ProgressBar)findViewById(R.id.uploadSpinner);
+            spinner.setVisibility(View.VISIBLE);
+            PhotoManager pm = new PhotoManager(this);
+            pm.upload(getMyImageStream());
+        }
+    }
+
+    public void onFinalSave(String imageId) {
+        ProgressBar spinner = (ProgressBar)findViewById(R.id.uploadSpinner);
+        spinner.setVisibility(View.GONE);
         Long tsLong = System.currentTimeMillis() / 1000;
         String ts = tsLong.toString();
+
         String firstName = ((TextView) findViewById(R.id.editTextFirstName)).getText().toString();
         String lastName = ((TextView) findViewById(R.id.editTextLastName)).getText().toString();
         String email = ((TextView) findViewById(R.id.editTextEmail)).getText().toString();
         String phone = ((TextView) findViewById(R.id.editTextPhone)).getText().toString();
 
-        PhotoManager pm = new PhotoManager();
-        String imageUrl = pm.upload(this.getMyImageStream());
-        Person person = new Person(ts, firstName, lastName, phone, email, "", imageUrl);
-        // Save profile to local sqlite db
-        // Probably do it through DBHandler, because we might have a chance to save ID as well.
-//        PersonContract.saveProfile(getApplicationContext(), person);
-
+        Person person = new Person(ts, firstName, lastName, phone, email, "", imageId);
         DBHandler.saveProfile(person, this);
+        // at this point person should have an ID
+        // TODO: save image with a special filename
 
         ((TextView) findViewById(R.id.textViewFirstName)).setText(firstName);
         ((TextView) findViewById(R.id.textViewLastName)).setText(lastName);
         ((TextView) findViewById(R.id.textViewEmail)).setText(email);
         ((TextView) findViewById(R.id.textViewPhone)).setText(phone);
+        //
 
         findViewById(R.id.linerLayoutView).setVisibility(View.VISIBLE);
         findViewById(R.id.linerLayoutEdit).setVisibility(View.INVISIBLE);
@@ -132,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.buttonEdit).setVisibility(View.VISIBLE);
         findViewById(R.id.buttonSave).setVisibility(View.INVISIBLE);
     }
+
 
     public void onEditClick(View view) {
         String firstName = ((TextView) findViewById(R.id.textViewFirstName)).getText().toString();
@@ -149,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.buttonEdit).setVisibility(View.INVISIBLE);
         findViewById(R.id.buttonSave).setVisibility(View.VISIBLE);
+
+        findViewById(R.id.uploadSpinner).setVisibility(View.GONE);
     }
 
     public void openGallery(View view) {
@@ -167,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     InputStream myImage = getContentResolver().openInputStream(selectedImageUri);
                     Bitmap bm2 = BitmapFactory.decodeStream(myImage);
+                    myImage = getContentResolver().openInputStream(selectedImageUri);
                     setMyImageStream(myImage);
                     ImageView imagePreview = (ImageView)findViewById(R.id.imagePreview);
                     imagePreview.setImageBitmap(bm2);
@@ -191,14 +205,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        System.out.println("Column index: "+column_index);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
-    }
+
     //endregion
 
     @Override
