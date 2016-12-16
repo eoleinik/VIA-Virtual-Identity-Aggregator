@@ -62,8 +62,7 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.contacts,
             R.drawable.person
     };
-
-    private BroadcastReceiver NetworkStatusReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver NetworkStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             new CheckInternetTask().execute();
@@ -191,12 +190,8 @@ public class MainActivity extends AppCompatActivity {
         } else {                                            // if we were scanning code
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             if (result != null) {
-                if (result.getContents() == null) {
-                    Log.d("MainActivity", "Cancelled scan");
-                    Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-                } else {
-                    Log.d("MainActivity", "Scanned");
-                    Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                if (result.getContents() != null) {
+                    DBHandler.addContactFromJSON(result.getContents(), this);
                 }
             } else {
                 // This is important, otherwise the result will not be passed to the fragment
@@ -233,6 +228,12 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager.setCurrentItem(1);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(NetworkStatusReceiver);
+        super.onDestroy();
     }
 
     private void setupTabIcons() {

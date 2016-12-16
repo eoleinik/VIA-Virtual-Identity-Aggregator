@@ -15,7 +15,7 @@ public class PhotoManager {
     private Context context;
 
     public PhotoManager(Context context) {
-        Map config = new HashMap();
+        Map<String, String> config = new HashMap<>();
         config.put("cloud_name", "dsvdd2buq");
         config.put("api_key", "817523914298379");
         config.put("api_secret", "TiOAfSyIkAuW16GbSGtFmwq6wkA");

@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
-            android:gravity="right"
+            android:gravity="end"
 
             android:orientation="horizontal"
             android:weightSum="1">
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"
                 android:background="@color/colorPrimary"
-                android:text="Scan" />
+                android:text="@string/scan" />
 
             <ImageView
                 android:id="@+id/targetPicture"
@@ -91,11 +91,14 @@
                 android:layout_gravity="end"
                 android:background="@color/colorPrimary"
                 android:clickable="true"
+                android:contentDescription="@string/target_icon"
                 android:focusable="false"
                 android:longClickable="false"
                 android:onClick="scanBarcodeCustomLayout"
                 android:padding="5pt"
+                android:paddingEnd="5pt"
                 android:paddingLeft="0pt"
+                android:paddingRight="5pt"
                 android:paddingStart="0pt"
                 android:scaleType="fitEnd"
 

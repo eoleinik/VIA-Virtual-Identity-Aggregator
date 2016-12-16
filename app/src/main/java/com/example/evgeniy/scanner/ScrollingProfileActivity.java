@@ -1,8 +1,10 @@
 package com.example.evgeniy.scanner;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,12 +13,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ScrollingProfileActivity extends AppCompatActivity {
-
+    private Person person;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling_profile);
-        Person person = this.getIntent().getExtras().getParcelable("person");
+        person = this.getIntent().getExtras().getParcelable("person");
 
         ImageView picture = (ImageView) findViewById(R.id.contact_picture);
         picture.setImageResource(R.drawable.dicaprio);
@@ -67,6 +69,15 @@ public class ScrollingProfileActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null)
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    public void onRemoveClick(View view) {
+        if (PersonContract.removeContact(this, person) == -1)
+            return;
+        Intent mainActivityIntent = new Intent(view.getContext(), MainActivity.class);
+        startActivity(mainActivityIntent);
     }
 }

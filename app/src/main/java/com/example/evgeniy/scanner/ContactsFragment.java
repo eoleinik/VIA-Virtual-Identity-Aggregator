@@ -1,6 +1,5 @@
 package com.example.evgeniy.scanner;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,22 +14,15 @@ import java.util.ArrayList;
 
 public class ContactsFragment extends Fragment{
 
-    private static ArrayList<Person> personList = new ArrayList<>();
-    private static ContactAdapter adapter;
-    private ListView contactsView;
+    private static final ArrayList<Person> personList = new ArrayList<>();
 
     public ContactsFragment() {
         // Required empty public constructor
     }
 
-    public static void update(Context context) {
-        personList = (ArrayList<Person>) PersonContract.getContacts(context);
-        if (adapter != null)
-            ((Activity) context).runOnUiThread(new Runnable() {
-                public void run() {
-                    adapter.notifyDataSetChanged();
-                }
-            });
+    public static void updatePersonList(Context context) {
+        personList.clear();
+        personList.addAll(PersonContract.getContacts(context));
     }
 
     @Override
@@ -45,12 +37,11 @@ public class ContactsFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         Context context = view.getContext();
 
-        contactsView = (ListView) view.findViewById(R.id.contactsList);
+        ListView contactsView = (ListView) view.findViewById(R.id.contactsList);
 
-        update(getActivity());
+        updatePersonList(getActivity());
 
-        adapter = new ContactAdapter(context, personList);
-        contactsView.setAdapter(adapter);
+        contactsView.setAdapter(new ContactAdapter(context, personList));
 
         contactsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

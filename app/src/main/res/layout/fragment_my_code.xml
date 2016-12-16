@@ -7,23 +7,24 @@ android:layout_height="match_parent"
 tools:context="com.example.evgeniy.scanner.MyCodeFragment">
 
     <ImageView
+        android:id="@+id/barcodeView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/barcodeView"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="true" />
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/qr_code"
+        android:scaleType="centerCrop" />
 
     <TextView
-        android:padding="20dp"
-        android:textAlignment="center"
         android:id="@+id/myCodeAlt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Please complete your profile to get a code"
-        android:textSize="35dp"
-        android:textStyle="bold"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:padding="20dp"
+        android:text="@string/no_profile_no_code"
+        android:textAlignment="center"
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>

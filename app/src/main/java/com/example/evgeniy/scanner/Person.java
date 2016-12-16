@@ -4,14 +4,24 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 class Person implements Parcelable {
+    public static final Parcelable.Creator CREATOR =
+            new Parcelable.Creator() {
+                public Person createFromParcel(Parcel in) {
+                    return new Person(in);
+                }
+
+                public Person[] newArray(int size) {
+                    return new Person[size];
+                }
+            };
+    private final String timestamp;
+    private final String firstName;
+    private final String lastName;
+    private final String phone;
+    private final String email;
+    private final String address;
+    private final String picture;
     private int id = -1;
-    private String timestamp;
-    private String firstName;
-    private String lastName;
-    private String phone;
-    private String email;
-    private String address;
-    private String picture;
 
     Person(String timestamp, String firstName, String lastName, String phone, String email, String address, String picture) {
         this.timestamp = timestamp;
@@ -32,6 +42,17 @@ class Person implements Parcelable {
         this.email = email;
         this.address = address;
         this.picture = picture;
+    }
+
+    private Person(Parcel in) {
+        this.id = in.readInt();
+        this.timestamp = in.readString();
+        this.firstName = in.readString();
+        this.lastName = in.readString();
+        this.phone = in.readString();
+        this.email = in.readString();
+        this.address = in.readString();
+        this.picture = in.readString();
     }
 
     int getId() {
@@ -66,6 +87,8 @@ class Person implements Parcelable {
         return address;
     }
 
+    // Parcel stuff
+
     String getPicture() {
         return picture;
     }
@@ -74,22 +97,9 @@ class Person implements Parcelable {
         return getFirstName()+" "+getLastName();
     }
 
-    // Parcel stuff
-
     @Override
     public int describeContents() {
         return 0;
-    }
-
-    public Person(Parcel in) {
-        this.id = in.readInt();
-        this.timestamp = in.readString();
-        this.firstName = in.readString();
-        this.lastName = in.readString();
-        this.phone = in.readString();
-        this.email = in.readString();
-        this.address = in.readString();
-        this.picture = in.readString();
     }
 
     @Override
@@ -104,15 +114,4 @@ class Person implements Parcelable {
         dest.writeString(this.address);
         dest.writeString(this.picture);
     }
-
-    public static final Parcelable.Creator CREATOR =
-        new Parcelable.Creator() {
-            public Person createFromParcel(Parcel in) {
-                return new Person(in);
-            }
-
-            public Person[] newArray(int size) {
-                return new Person[size];
-            }
-        };
 }

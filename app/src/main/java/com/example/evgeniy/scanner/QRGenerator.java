@@ -3,7 +3,6 @@ package com.example.evgeniy.scanner;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Environment;
 
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
@@ -18,11 +17,11 @@ import java.util.Map;
 
 import static com.google.zxing.BarcodeFormat.QR_CODE;
 
-public class QRGenerator {
+class QRGenerator {
 
-    public static void generateAndSave(Person person, String filename, Context context) {
+    static void generateAndSave(Person person, String filename, Context context) {
 
-        Map<String, String> dataToEncode = new HashMap<String, String>();
+        Map<String, String> dataToEncode = new HashMap<>();
         dataToEncode.put("id", ""+person.getId());
         dataToEncode.put("firstName", person.getFirstName());
         dataToEncode.put("lastName", person.getLastName());

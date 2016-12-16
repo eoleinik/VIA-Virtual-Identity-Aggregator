@@ -36,6 +36,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="@dimen/activity_horizontal_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:contentDescription="@string/phone_icon"
                     android:src="@drawable/ic_phone_black_48dp" />
 
                 <TextView
@@ -59,7 +60,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_toEndOf="@id/phone_picture"
                     android:layout_toRightOf="@id/phone_picture"
-                    android:text="Phone"
+                    android:text="@string/phone"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="#727272" />
 
@@ -89,6 +90,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="@dimen/activity_horizontal_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:contentDescription="@string/email_icon"
                     android:src="@drawable/ic_mail_outline_black_48dp" />
 
                 <TextView
@@ -114,7 +116,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_toEndOf="@id/email"
                     android:layout_toRightOf="@id/email"
-                    android:text="Email"
+                    android:text="@string/email"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="#727272" />
 
@@ -145,6 +147,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="@dimen/activity_horizontal_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:contentDescription="@string/address_icon"
                     android:src="@drawable/ic_business_black_48dp" />
 
                 <TextView
@@ -157,7 +160,7 @@
                     android:layout_toRightOf="@id/address_image"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="lalalalalala"
+                    android:text=""
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="#212121" />
 
@@ -170,7 +173,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_toEndOf="@id/address_image"
                     android:layout_toRightOf="@id/address_image"
-                    android:text="Address"
+                    android:text="@string/address"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="#727272" />
 
@@ -189,28 +192,29 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Send SMS" />
+                android:text="@string/send_sms" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
-                android:text="Call" />
+                android:text="@string/call" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
-                android:text="Email" />
+                android:text="@string/email" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
-                android:text="Remove Contact" />
+                android:onClick="onRemoveClick"
+                android:text="@string/remove_contact" />
 
         </LinearLayout>
     </LinearLayout>

@@ -1,6 +1,7 @@
 package com.example.evgeniy.scanner;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
@@ -136,9 +137,16 @@ class DBHandler {
                             if (jArray.length() == 0)
                                 Toast.makeText(context, "Invalid QR code", Toast.LENGTH_LONG).show();
                             else {
-                                int res = PersonContract.addContact(context, jsonToPerson(response));
-                                if (res > 0)
-                                    ContactsFragment.update(context);
+                                Person person = jsonToPerson(response);
+                                int res = PersonContract.addContact(context, person);
+                                if (res > 0) {
+                                    ContactsFragment.updatePersonList(context);
+                                    Intent detailIntent = new Intent(context, ScrollingProfileActivity.class);
+                                    detailIntent.putExtra("person", person);
+                                    context.startActivity(detailIntent);
+                                } else {
+                                    Toast.makeText(context, "Contact already added!", Toast.LENGTH_LONG).show();
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -211,7 +219,7 @@ class DBHandler {
                         }
                         catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(temp_context, "Can't update profile", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(temp_context, "Can't updatePersonList profile", Toast.LENGTH_SHORT).show();
                         }
                         Log.d("MyApp", response);
                     }
@@ -232,7 +240,7 @@ class DBHandler {
         final Context temp_context = context;
         // if no local ID
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = String.format("http://api.a16_sd206.studev.groept.be/updatePerson/%s/%s/%s/%s/%s/%s/%d",
+        String url = String.format(Locale.UK, "http://api.a16_sd206.studev.groept.be/updatePerson/%s/%s/%s/%s/%s/%s/%d",
                 newPerson.getFirstName(), newPerson.getLastName(), newPerson.getEmail(), newPerson.getPhone(), newPerson.getAddress(), newPerson.getPicture(), oldPerson.getId());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -248,7 +256,7 @@ class DBHandler {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("MyApp", error.getMessage());
-                        Toast.makeText(temp_context, "Can't update profile", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(temp_context, "Can't updatePersonList profile", Toast.LENGTH_SHORT).show();
                     }
                 });
 
