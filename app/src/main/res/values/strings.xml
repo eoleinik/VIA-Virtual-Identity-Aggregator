@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">V I A</string>
     <string name="scan">Scan</string>
-    <string name="generate">Generate</string>
     <string name="save">Save</string>
     <string name="edit">Edit</string>
     <string name="first_name">First name</string>
@@ -9,16 +8,23 @@
     <string name="phone">Phone</string>
     <string name="email">Email</string>
     <string name="address">Address</string>
-    <string name="turn_on_flashlight">Turn on flashlight</string>
-    <string name="turn_off_flashlight">Turn off flashlight</string>
     <string name="my_qr_code">my_qr_code.png</string>
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected</string>
-    <string name="phone_icon">Phone icon</string>
-    <string name="email_icon">Email icon</string>
-    <string name="address_icon">Address icon</string>
     <string name="send_sms">Send SMS</string>
     <string name="call">Call</string>
     <string name="remove_contact">Remove Contact</string>
+    <string name="no_profile_no_code">Please complete your profile to get a code</string>
+    <string name="choose_photo">Choose photo from gallery</string>
     <string name="internet_test">api.a16_sd206.studev.groept.be</string>
+
+    <!-- Content descriptions -->
+    <string name="phone_icon">Phone icon</string>
+    <string name="email_icon">Email icon</string>
+    <string name="address_icon">Address icon</string>
+    <string name="target_icon">Target icon</string>
+    <string name="contact_image">Contact image</string>
+    <string name="contact_image_large">Contact image large</string>
+    <string name="qr_code">QR code</string>
+    <string name="image_preview">Image preview</string>
 </resources>

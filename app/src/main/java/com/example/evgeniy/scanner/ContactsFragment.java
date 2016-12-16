@@ -14,8 +14,7 @@ import java.util.ArrayList;
 
 public class ContactsFragment extends Fragment{
 
-    static ArrayList<Person> personList = new ArrayList<>();
-    private ContactAdapter adapter;
+    private static final ArrayList<Person> personList = new ArrayList<>();
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -42,8 +41,7 @@ public class ContactsFragment extends Fragment{
 
         updatePersonList(getActivity());
 
-        adapter = new ContactAdapter(context, personList);
-        contactsView.setAdapter(adapter);
+        contactsView.setAdapter(new ContactAdapter(context, personList));
 
         contactsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

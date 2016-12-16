@@ -16,8 +16,8 @@ final class PersonContract {
                     PersonEntry.COLUMN_NAME_CONTACT_ID + " INTEGER PRIMARY KEY," +
                     PersonEntry.COLUMN_NAME_IS_ME + " INTEGER DEFAULT 0," +
                     PersonEntry.COLUMN_NAME_TIMESTAMP + " TEXT," +
-                    PersonEntry.COLUMN_NAME_FIRSTNAME + " TEXT," +
-                    PersonEntry.COLUMN_NAME_LASTNAME + " TEXT," +
+                    PersonEntry.COLUMN_NAME_FIRST_NAME + " TEXT," +
+                    PersonEntry.COLUMN_NAME_LAST_NAME + " TEXT," +
                     PersonEntry.COLUMN_NAME_ADDRESS + " TEXT," +
                     PersonEntry.COLUMN_NAME_EMAIL + " TEXT," +
                     PersonEntry.COLUMN_NAME_PHONE + " TEXT," +
@@ -37,7 +37,7 @@ final class PersonContract {
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String[] projection = {PersonEntry.COLUMN_NAME_FIRSTNAME};
+        String[] projection = {PersonEntry.COLUMN_NAME_FIRST_NAME};
 
         String selection = PersonEntry.COLUMN_NAME_CONTACT_ID + " = ?";
 
@@ -62,8 +62,8 @@ final class PersonContract {
             return -1;
 
         ContentValues values = new ContentValues();
-        values.put(PersonEntry.COLUMN_NAME_FIRSTNAME, person.getFirstName());
-        values.put(PersonEntry.COLUMN_NAME_LASTNAME, person.getLastName());
+        values.put(PersonEntry.COLUMN_NAME_FIRST_NAME, person.getFirstName());
+        values.put(PersonEntry.COLUMN_NAME_LAST_NAME, person.getLastName());
         values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
         values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
         values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
@@ -79,8 +79,8 @@ final class PersonContract {
 
         String[] projection = {
                 PersonEntry.COLUMN_NAME_TIMESTAMP,
-                PersonEntry.COLUMN_NAME_FIRSTNAME,
-                PersonEntry.COLUMN_NAME_LASTNAME,
+                PersonEntry.COLUMN_NAME_FIRST_NAME,
+                PersonEntry.COLUMN_NAME_LAST_NAME,
                 PersonEntry.COLUMN_NAME_PHONE,
                 PersonEntry.COLUMN_NAME_EMAIL,
                 PersonEntry.COLUMN_NAME_ADDRESS,
@@ -89,7 +89,7 @@ final class PersonContract {
 
         String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
         String[] selectionArgs = {"0"};
-        String sortOrder = PersonEntry.COLUMN_NAME_LASTNAME + " ASC";
+        String sortOrder = PersonEntry.COLUMN_NAME_LAST_NAME + " ASC";
 
         Cursor c = db.query(
                 PersonEntry.PEOPLE_TABLE_NAME,
@@ -137,8 +137,8 @@ final class PersonContract {
 
         ContentValues values = new ContentValues();
         values.put(PersonEntry.COLUMN_NAME_TIMESTAMP, person.getTimestamp());
-        values.put(PersonEntry.COLUMN_NAME_FIRSTNAME, person.getFirstName());
-        values.put(PersonEntry.COLUMN_NAME_LASTNAME, person.getLastName());
+        values.put(PersonEntry.COLUMN_NAME_FIRST_NAME, person.getFirstName());
+        values.put(PersonEntry.COLUMN_NAME_LAST_NAME, person.getLastName());
         values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
         values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
         values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
@@ -158,7 +158,7 @@ final class PersonContract {
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String[] projection = {PersonEntry.COLUMN_NAME_FIRSTNAME};
+        String[] projection = {PersonEntry.COLUMN_NAME_FIRST_NAME};
 
         Cursor c = db.query(
                 PersonEntry.PEOPLE_TABLE_NAME,     // The table to query
@@ -178,8 +178,8 @@ final class PersonContract {
         ContentValues values = new ContentValues();
         values.put(PersonEntry.COLUMN_NAME_CONTACT_ID, person.getId());
         values.put(PersonEntry.COLUMN_NAME_TIMESTAMP, person.getFirstName());
-        values.put(PersonEntry.COLUMN_NAME_FIRSTNAME, person.getFirstName());
-        values.put(PersonEntry.COLUMN_NAME_LASTNAME, person.getLastName());
+        values.put(PersonEntry.COLUMN_NAME_FIRST_NAME, person.getFirstName());
+        values.put(PersonEntry.COLUMN_NAME_LAST_NAME, person.getLastName());
         values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
         values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
         values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
@@ -212,8 +212,8 @@ final class PersonContract {
 
         String[] projection = {
                 PersonEntry.COLUMN_NAME_TIMESTAMP,
-                PersonEntry.COLUMN_NAME_FIRSTNAME,
-                PersonEntry.COLUMN_NAME_LASTNAME,
+                PersonEntry.COLUMN_NAME_FIRST_NAME,
+                PersonEntry.COLUMN_NAME_LAST_NAME,
                 PersonEntry.COLUMN_NAME_PHONE,
                 PersonEntry.COLUMN_NAME_EMAIL,
                 PersonEntry.COLUMN_NAME_ADDRESS,
@@ -245,8 +245,8 @@ final class PersonContract {
     private static Person getPersonFromCursor(Cursor c) {
         int id = c.getInt(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_CONTACT_ID));
         String timestamp = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_TIMESTAMP));
-        String firstName = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_FIRSTNAME));
-        String lastName = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_LASTNAME));
+        String firstName = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_FIRST_NAME));
+        String lastName = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_LAST_NAME));
         String phone = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_PHONE));
         String email = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_EMAIL));
         String address = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_ADDRESS));
@@ -258,8 +258,8 @@ final class PersonContract {
         static final String PEOPLE_TABLE_NAME = "profile";
         static final String COLUMN_NAME_IS_ME = "isMe";
         static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-        static final String COLUMN_NAME_FIRSTNAME = "firstName";
-        static final String COLUMN_NAME_LASTNAME = "lastName";
+        static final String COLUMN_NAME_FIRST_NAME = "firstName";
+        static final String COLUMN_NAME_LAST_NAME = "lastName";
         static final String COLUMN_NAME_PHONE = "phone";
         static final String COLUMN_NAME_EMAIL = "email";
         static final String COLUMN_NAME_ADDRESS = "address";

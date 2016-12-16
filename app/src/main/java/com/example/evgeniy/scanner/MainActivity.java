@@ -38,29 +38,27 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final int SELECT_IMAGE_FROM_GALLERY = 1;
+    private static final int SELECT_IMAGE_FROM_GALLERY = 1;
     public static boolean isConnected = false;
-    private InputStream myImageStream;
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private int[] tabIcons = {
+    private final int[] tabIcons = {
             R.drawable.qr_code,
             R.drawable.contacts,
             R.drawable.person
     };
-    private BroadcastReceiver NetworkStatusReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver NetworkStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             new CheckInternetTask().execute();
         }
     };
+    private InputStream myImageStream;
+    private TabLayout tabLayout;
 
-    public InputStream getMyImageStream() {
+    private InputStream getMyImageStream() {
         return myImageStream;
     }
 
-    public void setMyImageStream(InputStream imageStream) {
+    private void setMyImageStream(InputStream imageStream) {
         this.myImageStream = imageStream;
     }
 
@@ -205,14 +203,14 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(NetworkStatusReceiver, new IntentFilter(
                 ConnectivityManager.CONNECTIVITY_ACTION));
 //        Topbar:
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar == null)
             return;
         actionBar.setDisplayHomeAsUpEnabled(false);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);

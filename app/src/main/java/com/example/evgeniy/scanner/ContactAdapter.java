@@ -10,15 +10,13 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ContactAdapter extends BaseAdapter {
-    private Context mContext;
-    private LayoutInflater mInflater;
-    private ArrayList<Person> mDataSource;
+class ContactAdapter extends BaseAdapter {
+    private final LayoutInflater mInflater;
+    private final ArrayList<Person> mDataSource;
 
-    public ContactAdapter(Context context, ArrayList<Person> items) {
-        mContext = context;
+    ContactAdapter(Context context, ArrayList<Person> items) {
         mDataSource = items;
-        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -42,6 +40,7 @@ public class ContactAdapter extends BaseAdapter {
 
         TextView titleTextView = (TextView) rowView.findViewById(R.id.contact_list_title);
         TextView subtitleTextView = (TextView) rowView.findViewById(R.id.contact_list_subtitle);
+        // TODO: what do we want to use detail text for?
         TextView detailTextView = (TextView) rowView.findViewById(R.id.contact_list_detail);
         ImageView thumbnailImageView = (ImageView) rowView.findViewById(R.id.contact_list_thumbnail);
 
