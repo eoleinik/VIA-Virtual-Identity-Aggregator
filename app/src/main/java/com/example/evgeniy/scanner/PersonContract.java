@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,10 +58,8 @@ final class PersonContract {
 
         c.close();
 
-        if (profileExists) {
-            Toast.makeText(context, "Contact already added!", Toast.LENGTH_LONG);
+        if (profileExists)
             return -1;
-        }
 
         ContentValues values = new ContentValues();
         values.put(PersonEntry.COLUMN_NAME_FIRSTNAME, person.getFirstName());
@@ -115,8 +112,24 @@ final class PersonContract {
         return people;
     }
 
-    static int updateContact(Context context, Person person, int contactId) {
-        if (person.getId() == -1)
+    static int removeContact(Context context, Person person) {
+        if (person == null || person.getId() == -1)
+            return -1;
+
+        DbHelper dbHelper = new DbHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String selection = PersonEntry.COLUMN_NAME_CONTACT_ID + " = ?";
+        String[] selectionArgs = {Integer.toString(person.getId())};
+
+        return db.delete(
+                PersonEntry.PEOPLE_TABLE_NAME,
+                selection,
+                selectionArgs);
+    }
+
+    static int updateContact(Context context, Person person) {
+        if (person == null || person.getId() == -1)
             return -1;
 
         DbHelper dbHelper = new DbHelper(context);
@@ -131,7 +144,7 @@ final class PersonContract {
         values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
 
         String selection = PersonEntry.COLUMN_NAME_CONTACT_ID + " = ?";
-        String[] selectionArgs = {Integer.toString(contactId)};
+        String[] selectionArgs = {Integer.toString(person.getId())};
 
         return db.update(
                 PersonEntry.PEOPLE_TABLE_NAME,
@@ -255,7 +268,7 @@ final class PersonContract {
     }
 
     private static class DbHelper extends SQLiteOpenHelper {
-        // If schema is changed, update this DB version!
+        // If schema is changed, updatePersonList this DB version!
         static final int DATABASE_VERSION = 5;
         static final String DATABASE_NAME = "Local.db";
 

@@ -8,12 +8,17 @@
     <string name="last_name">Last name</string>
     <string name="phone">Phone</string>
     <string name="email">Email</string>
+    <string name="address">Address</string>
     <string name="turn_on_flashlight">Turn on flashlight</string>
     <string name="turn_off_flashlight">Turn off flashlight</string>
     <string name="my_qr_code">my_qr_code.png</string>
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="phone_icon">Phone icon</string>
+    <string name="email_icon">Email icon</string>
+    <string name="address_icon">Address icon</string>
+    <string name="send_sms">Send SMS</string>
+    <string name="call">Call</string>
+    <string name="remove_contact">Remove Contact</string>
     <string name="internet_test">api.a16_sd206.studev.groept.be</string>
 </resources>

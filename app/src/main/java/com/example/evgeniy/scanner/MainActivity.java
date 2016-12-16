@@ -27,7 +27,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -39,20 +38,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private InputStream myImageStream;
-
-    public InputStream getMyImageStream() {
-        return myImageStream;
-    }
-
-    public void setMyImageStream(InputStream imageStream) {
-        this.myImageStream = imageStream;
-    }
-
     static final int SELECT_IMAGE_FROM_GALLERY = 1;
-
     public static boolean isConnected = false;
-
+    private InputStream myImageStream;
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -61,13 +49,20 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.contacts,
             R.drawable.person
     };
-
     private BroadcastReceiver NetworkStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             new CheckInternetTask().execute();
         }
     };
+
+    public InputStream getMyImageStream() {
+        return myImageStream;
+    }
+
+    public void setMyImageStream(InputStream imageStream) {
+        this.myImageStream = imageStream;
+    }
 
     private void updateConnected() {
         final TextView connectionStatusText = (TextView) findViewById(R.id.connectionStatus);
@@ -177,12 +172,8 @@ public class MainActivity extends AppCompatActivity {
         } else {                                            // if we were scanning code
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             if (result != null) {
-                if (result.getContents() == null) {
-                    Log.d("MainActivity", "Cancelled scan");
-                    Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-                } else {
-                    Log.d("MainActivity", "Scanned");
-                    Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                if (result.getContents() != null) {
+                    DBHandler.addContactFromJSON(result.getContents(), this);
                 }
             } else {
                 // This is important, otherwise the result will not be passed to the fragment
@@ -193,11 +184,15 @@ public class MainActivity extends AppCompatActivity {
 
     public String getPath(Uri uri) {
         String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if (cursor == null)
+            return "Failure";
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         System.out.println("Column index: "+column_index);
         cursor.moveToFirst();
-        return cursor.getString(column_index);
+        String res = cursor.getString(column_index);
+        cursor.close();
+        return res;
     }
     //endregion
 
@@ -226,6 +221,12 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager.setCurrentItem(1);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(NetworkStatusReceiver);
+        super.onDestroy();
     }
 
     private void setupTabIcons() {
