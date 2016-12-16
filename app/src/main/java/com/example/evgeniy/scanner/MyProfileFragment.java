@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MyProfileFragment extends Fragment{
@@ -28,6 +29,9 @@ public class MyProfileFragment extends Fragment{
         ((TextView) v.findViewById(R.id.textViewLastName)).setText(person.getLastName());
         ((TextView) v.findViewById(R.id.textViewEmail)).setText(person.getEmail());
         ((TextView) v.findViewById(R.id.textViewPhone)).setText(person.getPhone());
+
+        ProgressBar spinner = (ProgressBar)v.findViewById(R.id.uploadSpinner);
+        spinner.setVisibility(View.GONE);
     }
 
 

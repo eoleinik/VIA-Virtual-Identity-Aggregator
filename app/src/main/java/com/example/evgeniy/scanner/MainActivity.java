@@ -105,15 +105,24 @@ public class MainActivity extends AppCompatActivity {
 
     //region  Profile fragment
     public void onSaveClick(View view) {
+        ProgressBar spinner = (ProgressBar)findViewById(R.id.uploadSpinner);
+        spinner.setVisibility(View.GONE);
         if (this.getMyImageStream() != null) {
-            ProgressBar spinner = (ProgressBar)findViewById(R.id.uploadSpinner);
             spinner.setVisibility(View.VISIBLE);
             PhotoManager pm = new PhotoManager(this);
             pm.upload(getMyImageStream());
+        } else {
+            onFinalSave(null);
         }
     }
 
     public void onFinalSave(String imageId) {
+        if (imageId == null) {
+            Person person = PersonContract.getProfile(this);
+            if (person != null) {
+                imageId = person.getPicture();
+            }
+        }
         ProgressBar spinner = (ProgressBar)findViewById(R.id.uploadSpinner);
         spinner.setVisibility(View.GONE);
         Long tsLong = System.currentTimeMillis() / 1000;
@@ -126,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
         Person person = new Person(ts, firstName, lastName, phone, email, "", imageId);
         DBHandler.saveProfile(person, this);
+
         // at this point person should have an ID
         // TODO: save image with a special filename
 
