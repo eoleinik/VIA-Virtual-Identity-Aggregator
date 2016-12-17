@@ -6,14 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,11 +26,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -40,14 +40,14 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private InputStream myImageStream = null;
+    private Uri myImageUri = null;
 
-    public InputStream getMyImageStream() {
-        return myImageStream;
+    public Uri getMyImageUri() {
+        return myImageUri;
     }
 
-    public void setMyImageStream(InputStream imageStream) {
-        this.myImageStream = imageStream;
+    public void setMyImageUri(Uri imageUri) {
+        this.myImageUri = imageUri;
     }
 
     static final int SELECT_IMAGE_FROM_GALLERY = 1;
@@ -107,10 +107,10 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveClick(View view) {
         ProgressBar spinner = (ProgressBar)findViewById(R.id.uploadSpinner);
         spinner.setVisibility(View.GONE);
-        if (this.getMyImageStream() != null) {
+        if (this.getMyImageUri() != null) {
             spinner.setVisibility(View.VISIBLE);
             PhotoManager pm = new PhotoManager(this);
-            pm.upload(getMyImageStream());
+            pm.upload(getMyImageUri());
         } else {
             onFinalSave(null);
         }
@@ -136,33 +136,41 @@ public class MainActivity extends AppCompatActivity {
         Person person = new Person(ts, firstName, lastName, phone, email, "", imageId);
         DBHandler.saveProfile(person, this);
 
-        // at this point person should have an ID
-        // TODO: save image with a special filename
+        // at this point `person` should have an ID, as well as populated fields
 
-        ((TextView) findViewById(R.id.textViewFirstName)).setText(firstName);
-        ((TextView) findViewById(R.id.textViewLastName)).setText(lastName);
-        ((TextView) findViewById(R.id.textViewEmail)).setText(email);
-        ((TextView) findViewById(R.id.textViewPhone)).setText(phone);
-        //
+        ((TextView) findViewById(R.id.textViewFirstName)).setText(person.getFirstName());
+        ((TextView) findViewById(R.id.textViewLastName)).setText(person.getLastName());
+        ((TextView) findViewById(R.id.textViewEmail)).setText(person.getEmail());
+        ((TextView) findViewById(R.id.textViewPhone)).setText(person.getPhone());
 
         findViewById(R.id.linerLayoutView).setVisibility(View.VISIBLE);
         findViewById(R.id.linerLayoutEdit).setVisibility(View.INVISIBLE);
 
         findViewById(R.id.buttonEdit).setVisibility(View.VISIBLE);
         findViewById(R.id.buttonSave).setVisibility(View.INVISIBLE);
+
+        if (imageId != null) {
+            try {
+                File sd = getFilesDir();
+                File myImage = new File(sd, imageId);
+                FileInputStream in = new FileInputStream(myImage);
+                Bitmap bitmap = BitmapFactory.decodeStream(in);
+                ImageView imageView = (ImageView)findViewById(R.id.imageView);
+                imageView.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                System.out.println("Couldn't load my profile image");
+            }
+        }
     }
 
 
     public void onEditClick(View view) {
-        String firstName = ((TextView) findViewById(R.id.textViewFirstName)).getText().toString();
-        String lastName = ((TextView) findViewById(R.id.textViewLastName)).getText().toString();
-        String email = ((TextView) findViewById(R.id.textViewEmail)).getText().toString();
-        String phone = ((TextView) findViewById(R.id.textViewPhone)).getText().toString();
+        Person person = PersonContract.getProfile(this);
 
-        ((TextView) findViewById(R.id.editTextFirstName)).setText(firstName);
-        ((TextView) findViewById(R.id.editTextLastName)).setText(lastName);
-        ((TextView) findViewById(R.id.editTextEmail)).setText(email);
-        ((TextView) findViewById(R.id.editTextPhone)).setText(phone);
+        ((TextView) findViewById(R.id.editTextFirstName)).setText(person.getFirstName());
+        ((TextView) findViewById(R.id.editTextLastName)).setText(person.getLastName());
+        ((TextView) findViewById(R.id.editTextEmail)).setText(person.getEmail());
+        ((TextView) findViewById(R.id.editTextPhone)).setText(person.getPhone());
 
         findViewById(R.id.linerLayoutView).setVisibility(View.INVISIBLE);
         findViewById(R.id.linerLayoutEdit).setVisibility(View.VISIBLE);
@@ -171,6 +179,20 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.buttonSave).setVisibility(View.VISIBLE);
 
         findViewById(R.id.uploadSpinner).setVisibility(View.GONE);
+
+        String imageId = person.getPicture();
+        if (imageId != null) {
+            try {
+                File sd = getFilesDir();
+                File myImage = new File(sd, imageId);
+                FileInputStream in = new FileInputStream(myImage);
+                Bitmap bitmap = BitmapFactory.decodeStream(in);
+                ImageView imagePreview = (ImageView)findViewById(R.id.imagePreview);
+                imagePreview.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                System.out.println("Couldn't load my profile image");
+            }
+        }
     }
 
     public void openGallery(View view) {
@@ -187,10 +209,9 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Uri selectedImageUri = data.getData();
                 try {
+                    setMyImageUri(selectedImageUri);
                     InputStream myImage = getContentResolver().openInputStream(selectedImageUri);
                     Bitmap bm2 = BitmapFactory.decodeStream(myImage);
-                    myImage = getContentResolver().openInputStream(selectedImageUri);
-                    setMyImageStream(myImage);
                     ImageView imagePreview = (ImageView)findViewById(R.id.imagePreview);
                     imagePreview.setImageBitmap(bm2);
                 } catch (Exception e) {

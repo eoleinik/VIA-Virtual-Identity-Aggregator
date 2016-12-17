@@ -1,12 +1,19 @@
 package com.example.evgeniy.scanner;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class MyProfileFragment extends Fragment{
 
@@ -32,6 +39,22 @@ public class MyProfileFragment extends Fragment{
 
         ProgressBar spinner = (ProgressBar)v.findViewById(R.id.uploadSpinner);
         spinner.setVisibility(View.GONE);
+
+        String imageId = person.getPicture();
+
+        if (imageId != null) {
+            try {
+                File sd = getContext().getFilesDir();
+                File myImage = new File(sd, imageId);
+                FileInputStream in = new FileInputStream(myImage);
+                Bitmap bitmap = BitmapFactory.decodeStream(in);
+                ImageView imageView = (ImageView)v.findViewById(R.id.imageView);
+                imageView.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                System.out.println("Couldn't load my profile image");
+            }
+        }
     }
 
 
