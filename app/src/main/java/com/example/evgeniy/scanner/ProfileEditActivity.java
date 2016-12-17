@@ -40,24 +40,26 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         Person person = PersonContract.getProfile(this);
 
-        ((TextView) findViewById(R.id.editTextFirstName)).setText(person.getFirstName());
-        ((TextView) findViewById(R.id.editTextLastName)).setText(person.getLastName());
-        ((TextView) findViewById(R.id.editTextEmail)).setText(person.getEmail());
-        ((TextView) findViewById(R.id.editTextPhone)).setText(person.getPhone());
+        if (person != null) {
+            ((TextView) findViewById(R.id.editTextFirstName)).setText(person.getFirstName());
+            ((TextView) findViewById(R.id.editTextLastName)).setText(person.getLastName());
+            ((TextView) findViewById(R.id.editTextEmail)).setText(person.getEmail());
+            ((TextView) findViewById(R.id.editTextPhone)).setText(person.getPhone());
 
-        findViewById(R.id.uploadSpinner).setVisibility(View.GONE);
+            findViewById(R.id.uploadSpinner).setVisibility(View.GONE);
 
-        String imageId = person.getPicture();
-        if (imageId != null) {
-            try {
-                File sd = getFilesDir();
-                File myImage = new File(sd, imageId);
-                FileInputStream in = new FileInputStream(myImage);
-                Bitmap bitmap = BitmapFactory.decodeStream(in);
-                ImageView imagePreview = (ImageView)findViewById(R.id.imagePreview);
-                imagePreview.setImageBitmap(bitmap);
-            } catch (FileNotFoundException e) {
-                System.out.println("Couldn't load my profile image");
+            String imageId = person.getPicture();
+            if (imageId != null) {
+                try {
+                    File sd = getFilesDir();
+                    File myImage = new File(sd, imageId);
+                    FileInputStream in = new FileInputStream(myImage);
+                    Bitmap bitmap = BitmapFactory.decodeStream(in);
+                    ImageView imagePreview = (ImageView)findViewById(R.id.imagePreview);
+                    imagePreview.setImageBitmap(bitmap);
+                } catch (FileNotFoundException e) {
+                    System.out.println("Couldn't load my profile image");
+                }
             }
         }
     }

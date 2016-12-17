@@ -8,7 +8,7 @@
     android:padding="@dimen/activity_horizontal_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.evgeniy.scanner.ScrollingProfileActivity"
-    tools:showIn="@layout/activity_scrolling_profile">
+    tools:showIn="@layout/fragment_my_profile">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -178,44 +178,8 @@
 
             </RelativeLayout>
 
-            <include layout="@layout/item_divider" />
-
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/activity_horizontal_margin">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/send_sms" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/activity_horizontal_margin"
-                android:text="@string/call" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/activity_horizontal_margin"
-                android:text="@string/email" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/activity_horizontal_margin"
-                android:onClick="onRemoveClick"
-                android:text="@string/remove_contact" />
-
-        </LinearLayout>
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

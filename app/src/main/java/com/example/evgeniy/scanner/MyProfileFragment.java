@@ -1,5 +1,6 @@
 package com.example.evgeniy.scanner;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -26,24 +27,18 @@ public class MyProfileFragment extends Fragment{
         if (person == null)
             return;
 
-        v.findViewById(R.id.linerLayoutView).setVisibility(View.VISIBLE);
-
-        v.findViewById(R.id.buttonEdit).setVisibility(View.VISIBLE);
-
-        ((TextView) v.findViewById(R.id.textViewFirstName)).setText(person.getFirstName());
-        ((TextView) v.findViewById(R.id.textViewLastName)).setText(person.getLastName());
-        ((TextView) v.findViewById(R.id.textViewEmail)).setText(person.getEmail());
-        ((TextView) v.findViewById(R.id.textViewPhone)).setText(person.getPhone());
+        ((TextView) v.findViewById(R.id.email_address)).setText(person.getEmail());
+        ((TextView) v.findViewById(R.id.phone_number)).setText(person.getPhone());
+        ((TextView) v.findViewById(R.id.address)).setText(person.getAddress());
 
         String imageId = person.getPicture();
-
         if (imageId != null) {
             try {
                 File sd = getContext().getFilesDir();
                 File myImage = new File(sd, imageId);
                 FileInputStream in = new FileInputStream(myImage);
                 Bitmap bitmap = BitmapFactory.decodeStream(in);
-                ImageView imageView = (ImageView)v.findViewById(R.id.imageView);
+                ImageView imageView = (ImageView) v.findViewById(R.id.my_picture);
                 imageView.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -61,9 +56,16 @@ public class MyProfileFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_my_profile, container, false);
-        loadProfile(v);
-        return v;
+
+        if (PersonContract.getProfile(v.getContext()) == null) {
+            Intent detailIntent = new Intent(v.getContext(), ProfileEditActivity.class);
+            startActivity(detailIntent);
+            return v;
+        } else {
+            // Inflate the layout for this fragment
+            loadProfile(v);
+            return v;
+        }
     }
 }
