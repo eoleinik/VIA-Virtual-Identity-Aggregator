@@ -1,14 +1,12 @@
 package com.example.evgeniy.scanner;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -21,7 +19,21 @@ import java.io.InputStream;
 
 public class ProfileEditActivity extends AppCompatActivity {
 
+    static final int SELECT_IMAGE_FROM_GALLERY = 1;
     private Uri myImageUri = null;
+
+    static void saveSuccess(Activity activity, Person person) {
+        Activity parent = activity.getParent();
+        if (parent != null) {
+            ((TextView) parent.findViewById(R.id.textViewFirstName)).setText(person.getFirstName());
+            ((TextView) parent.findViewById(R.id.textViewLastName)).setText(person.getLastName());
+            ((TextView) parent.findViewById(R.id.textViewEmail)).setText(person.getEmail());
+            ((TextView) parent.findViewById(R.id.textViewPhone)).setText(person.getPhone());
+        }
+
+        activity.setResult(RESULT_OK);
+        activity.finish();
+    }
 
     public Uri getMyImageUri() {
         return myImageUri;
@@ -31,23 +43,23 @@ public class ProfileEditActivity extends AppCompatActivity {
         this.myImageUri = imageUri;
     }
 
-    static final int SELECT_IMAGE_FROM_GALLERY = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_edit);
 
         Person person = PersonContract.getProfile(this);
-
-        ((TextView) findViewById(R.id.editTextFirstName)).setText(person.getFirstName());
-        ((TextView) findViewById(R.id.editTextLastName)).setText(person.getLastName());
-        ((TextView) findViewById(R.id.editTextEmail)).setText(person.getEmail());
-        ((TextView) findViewById(R.id.editTextPhone)).setText(person.getPhone());
+        String imageId = null;
+        if (person != null) {
+            ((TextView) findViewById(R.id.editTextFirstName)).setText(person.getFirstName());
+            ((TextView) findViewById(R.id.editTextLastName)).setText(person.getLastName());
+            ((TextView) findViewById(R.id.editTextEmail)).setText(person.getEmail());
+            ((TextView) findViewById(R.id.editTextPhone)).setText(person.getPhone());
+            imageId = person.getPicture();
+        }
 
         findViewById(R.id.uploadSpinner).setVisibility(View.GONE);
 
-        String imageId = person.getPicture();
         if (imageId != null) {
             try {
                 File sd = getFilesDir();
@@ -109,20 +121,15 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
         ProgressBar spinner = (ProgressBar)findViewById(R.id.uploadSpinner);
         spinner.setVisibility(View.GONE);
-        Long tsLong = System.currentTimeMillis() / 1000;
-        String ts = tsLong.toString();
 
         String firstName = ((TextView) findViewById(R.id.editTextFirstName)).getText().toString();
         String lastName = ((TextView) findViewById(R.id.editTextLastName)).getText().toString();
         String email = ((TextView) findViewById(R.id.editTextEmail)).getText().toString();
         String phone = ((TextView) findViewById(R.id.editTextPhone)).getText().toString();
 
-        Person person = new Person(ts, firstName, lastName, phone, email, "", imageId);
+        Person person = new Person(firstName, lastName, phone, email, "", imageId);
         DBHandler.saveProfile(person, this);
         // at this point `person` should have an ID, as well as populated fields
-
-        setResult(RESULT_OK);
-
-        finish();
+        // we shouldn't finish here: we don't know if save was successful..
     }
 }

@@ -21,7 +21,7 @@ public class ScrollingProfileActivity extends AppCompatActivity {
         person = this.getIntent().getExtras().getParcelable("person");
 
         ImageView picture = (ImageView) findViewById(R.id.contact_picture);
-        picture.setImageResource(R.drawable.dicaprio);
+        picture.setImageBitmap(person.getBitmap(this));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

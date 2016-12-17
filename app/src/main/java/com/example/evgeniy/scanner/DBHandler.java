@@ -1,5 +1,6 @@
 package com.example.evgeniy.scanner;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -41,10 +42,9 @@ class DBHandler {
         }
     }
 
-    static void addContactFromJSON(String json, Context context) {
+    static void addContactFromJSON(String json, final Context context) {
         JSONObject jsonObject;
         final int id;
-        final Context temp_context = context;
         if (!MainActivity.isConnected) {
             Toast.makeText(context, "Must be connected to scan", Toast.LENGTH_LONG).show();
             return;
@@ -81,9 +81,9 @@ class DBHandler {
                         try {
                             JSONArray jArray = new JSONArray(response);
                             if (jArray.length() == 0)
-                                Toast.makeText(temp_context, "Invalid QR code", Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "Invalid QR code", Toast.LENGTH_LONG).show();
                             else
-                                DBHandler.addRelationship(temp_context, myId, id);
+                                DBHandler.addContact(context, myId, id);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -100,18 +100,21 @@ class DBHandler {
         // Get person info to add to contact
     }
 
-    private static void addRelationship(Context context, int myId, final int theirId) {
+    private static void addContact(final Context context, int myId, final int theirId) {
         // Add relationship to remote
-        final Context temp_context = context;
+        boolean success = true;
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = String.format("http://api.a16_sd206.studev.groept.be/createRelationship/%s/%s",
+        String url_me_them = String.format("http://api.a16_sd206.studev.groept.be/addContact/%s/%s",
                 myId, theirId);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+        String url_them_me = String.format("http://api.a16_sd206.studev.groept.be/addContact/%s/%s",
+                theirId, myId);
+
+        StringRequest firstRequest = new StringRequest(Request.Method.GET, url_me_them,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d("MyApp", response);
-                        DBHandler.getNewContact(temp_context, theirId);
+                        getNewContact(context, theirId);
                     }
                 },
                 new Response.ErrorListener() {
@@ -121,7 +124,22 @@ class DBHandler {
                     }
                 });
 
-        queue.add(stringRequest);
+        StringRequest secondRequest = new StringRequest(Request.Method.GET, url_them_me,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("MyApp", response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("MyApp", error.getMessage());
+                    }
+                });
+
+        queue.add(firstRequest);
+        queue.add(secondRequest);
     }
 
     private static void getNewContact(final Context context, final int id) {
@@ -164,6 +182,15 @@ class DBHandler {
 
     }
 
+    static void updateContacts(final Context context) {
+        // getContacts
+        // getContacts from remote
+        // are there ids in remote that are not present in local?
+        //      add contact
+        // compare timestamps
+        //      if changed update contact and re download image
+    }
+
     static void saveProfile(Person person, Context context) {
         Person localPerson = PersonContract.getProfile(context);
         if (localPerson == null) {
@@ -174,9 +201,7 @@ class DBHandler {
 
     }
 
-    private static void createNewPerson(Person person, Context context) {
-        final Person temp_person = person;
-        final Context temp_context = context;
+    private static void createNewPerson(final Person person, final Context context) {
         // if no local ID
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = String.format("http://api.a16_sd206.studev.groept.be/createPerson/%s/%s/%s/%s/%s/%s",
@@ -186,22 +211,21 @@ class DBHandler {
                     @Override
                     public void onResponse(String response) {
                         Log.d("MyApp", response);
-                        DBHandler.assignNewlyCreatedId(temp_person, temp_context);
+                        DBHandler.assignNewlyCreatedId(person, context);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("MyApp", error.getMessage());
+                        //MyProfileFragment.saveFailedUI(context);
                     }
                 });
 
         queue.add(stringRequest);
     }
 
-    private static void assignNewlyCreatedId(Person person, Context context) {
-        final Person temp_person = person;
-        final Context temp_context = context;
+    private static void assignNewlyCreatedId(final Person person, final Context context) {
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = String.format("http://api.a16_sd206.studev.groept.be/getPersonByAttributes/%s/%s/%s/%s",
                 person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone());
@@ -213,13 +237,15 @@ class DBHandler {
                             int createdId;
                             JSONArray jArray = new JSONArray(response);
                             createdId = Integer.parseInt(jArray.getJSONObject(0).getString("id"));
-                            temp_person.setId(createdId);
-                            PersonContract.saveProfile(temp_context, temp_person);
-                            Toast.makeText(temp_context, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                            person.setId(createdId);
+                            PersonContract.saveProfile(context, person);
+                            Toast.makeText(context, "Profile created successfully", Toast.LENGTH_SHORT).show();
+                            ProfileEditActivity.saveSuccess((Activity) context, person);
                         }
                         catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(temp_context, "Can't updatePersonList profile", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Can't updatePersonList profile", Toast.LENGTH_SHORT).show();
+                            //MyProfileFragment.saveFailedUI(context);
                         }
                         Log.d("MyApp", response);
                     }
@@ -234,10 +260,7 @@ class DBHandler {
         queue.add(stringRequest);
     }
 
-    private static void updateExistingPerson(Person oldPerson, Person newPerson, Context context) {
-        final Person temp_old_person = oldPerson;
-        final Person temp_new_person = newPerson;
-        final Context temp_context = context;
+    private static void updateExistingPerson(final Person oldPerson, final Person newPerson, final Context context) {
         // if no local ID
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = String.format(Locale.UK, "http://api.a16_sd206.studev.groept.be/updatePerson/%s/%s/%s/%s/%s/%s/%d",
@@ -247,16 +270,18 @@ class DBHandler {
                     @Override
                     public void onResponse(String response) {
                         Log.d("MyApp", response);
-                        temp_new_person.setId(temp_old_person.getId());
-                        PersonContract.saveProfile(temp_context, temp_new_person);
-                        Toast.makeText(temp_context, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                        newPerson.setId(oldPerson.getId());
+                        PersonContract.saveProfile(context, newPerson);
+                        Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                        ProfileEditActivity.saveSuccess((Activity) context, newPerson);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("MyApp", error.getMessage());
-                        Toast.makeText(temp_context, "Can't updatePersonList profile", Toast.LENGTH_SHORT).show();
+                        //MyProfileFragment.saveFailedUI(context);
+                        Toast.makeText(context, "Can't updatePersonList profile", Toast.LENGTH_SHORT).show();
                     }
                 });
 

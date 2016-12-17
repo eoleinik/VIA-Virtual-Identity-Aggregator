@@ -1,7 +1,14 @@
 package com.example.evgeniy.scanner;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 class Person implements Parcelable {
     public static final Parcelable.Creator CREATOR =
@@ -21,10 +28,21 @@ class Person implements Parcelable {
     private final String email;
     private final String address;
     private final String picture;
+    private Bitmap bitmap = null;
     private int id = -1;
 
     Person(String timestamp, String firstName, String lastName, String phone, String email, String address, String picture) {
         this.timestamp = timestamp;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.picture = picture;
+    }
+
+    Person(String firstName, String lastName, String phone, String email, String address, String picture) {
+        this.timestamp = null;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -91,6 +109,23 @@ class Person implements Parcelable {
 
     String getPicture() {
         return picture;
+    }
+
+    Bitmap getBitmap(Context context) {
+        if (bitmap == null) {
+            FileInputStream in;
+
+            try {
+                File sd = context.getFilesDir();
+                File file = new File(sd, picture);
+                in = new FileInputStream(file);
+                bitmap = BitmapFactory.decodeStream(in);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return bitmap;
     }
 
     String getFullName() {
