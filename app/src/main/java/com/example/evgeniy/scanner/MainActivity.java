@@ -6,16 +6,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -23,40 +23,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
+
 import android.widget.TextView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Uri myImageUri = null;
-
-    public Uri getMyImageUri() {
-        return myImageUri;
-    }
-
-    public void setMyImageUri(Uri imageUri) {
-        this.myImageUri = imageUri;
-    }
-
-    static final int SELECT_IMAGE_FROM_GALLERY = 1;
-
     public static boolean isConnected = false;
+
+    static final int UPDATE_PROFILE = 2;
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+
     private int[] tabIcons = {
             R.drawable.qr_code,
             R.drawable.contacts,
@@ -104,121 +91,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //region  Profile fragment
-    public void onSaveClick(View view) {
-        ProgressBar spinner = (ProgressBar)findViewById(R.id.uploadSpinner);
-        spinner.setVisibility(View.GONE);
-        if (this.getMyImageUri() != null) {
-            spinner.setVisibility(View.VISIBLE);
-            PhotoManager pm = new PhotoManager(this);
-            pm.upload(getMyImageUri());
-        } else {
-            onFinalSave(null);
-        }
-    }
-
-    public void onFinalSave(String imageId) {
-        if (imageId == null) {
-            Person person = PersonContract.getProfile(this);
-            if (person != null) {
-                imageId = person.getPicture();
-            }
-        }
-        ProgressBar spinner = (ProgressBar)findViewById(R.id.uploadSpinner);
-        spinner.setVisibility(View.GONE);
-        Long tsLong = System.currentTimeMillis() / 1000;
-        String ts = tsLong.toString();
-
-        String firstName = ((TextView) findViewById(R.id.editTextFirstName)).getText().toString();
-        String lastName = ((TextView) findViewById(R.id.editTextLastName)).getText().toString();
-        String email = ((TextView) findViewById(R.id.editTextEmail)).getText().toString();
-        String phone = ((TextView) findViewById(R.id.editTextPhone)).getText().toString();
-
-        Person person = new Person(ts, firstName, lastName, phone, email, "", imageId);
-        DBHandler.saveProfile(person, this);
-
-        // at this point `person` should have an ID, as well as populated fields
-
-        ((TextView) findViewById(R.id.textViewFirstName)).setText(person.getFirstName());
-        ((TextView) findViewById(R.id.textViewLastName)).setText(person.getLastName());
-        ((TextView) findViewById(R.id.textViewEmail)).setText(person.getEmail());
-        ((TextView) findViewById(R.id.textViewPhone)).setText(person.getPhone());
-
-        findViewById(R.id.linerLayoutView).setVisibility(View.VISIBLE);
-        findViewById(R.id.linerLayoutEdit).setVisibility(View.INVISIBLE);
-
-        findViewById(R.id.buttonEdit).setVisibility(View.VISIBLE);
-        findViewById(R.id.buttonSave).setVisibility(View.INVISIBLE);
-
-        if (imageId != null) {
-            try {
-                File sd = getFilesDir();
-                File myImage = new File(sd, imageId);
-                FileInputStream in = new FileInputStream(myImage);
-                Bitmap bitmap = BitmapFactory.decodeStream(in);
-                ImageView imageView = (ImageView)findViewById(R.id.imageView);
-                imageView.setImageBitmap(bitmap);
-            } catch (FileNotFoundException e) {
-                System.out.println("Couldn't load my profile image");
-            }
-        }
-    }
 
 
     public void onEditClick(View view) {
-        Person person = PersonContract.getProfile(this);
-
-        ((TextView) findViewById(R.id.editTextFirstName)).setText(person.getFirstName());
-        ((TextView) findViewById(R.id.editTextLastName)).setText(person.getLastName());
-        ((TextView) findViewById(R.id.editTextEmail)).setText(person.getEmail());
-        ((TextView) findViewById(R.id.editTextPhone)).setText(person.getPhone());
-
-        findViewById(R.id.linerLayoutView).setVisibility(View.INVISIBLE);
-        findViewById(R.id.linerLayoutEdit).setVisibility(View.VISIBLE);
-
-        findViewById(R.id.buttonEdit).setVisibility(View.INVISIBLE);
-        findViewById(R.id.buttonSave).setVisibility(View.VISIBLE);
-
-        findViewById(R.id.uploadSpinner).setVisibility(View.GONE);
-
-        String imageId = person.getPicture();
-        if (imageId != null) {
-            try {
-                File sd = getFilesDir();
-                File myImage = new File(sd, imageId);
-                FileInputStream in = new FileInputStream(myImage);
-                Bitmap bitmap = BitmapFactory.decodeStream(in);
-                ImageView imagePreview = (ImageView)findViewById(R.id.imagePreview);
-                imagePreview.setImageBitmap(bitmap);
-            } catch (FileNotFoundException e) {
-                System.out.println("Couldn't load my profile image");
-            }
-        }
-    }
-
-    public void openGallery(View view) {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,
-                "Select file to upload "), SELECT_IMAGE_FROM_GALLERY);
+        Intent detailIntent = new Intent(view.getContext(), ProfileEditActivity.class);
+        startActivityForResult(detailIntent, UPDATE_PROFILE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SELECT_IMAGE_FROM_GALLERY) {     // if we were choosing photo
+        if (requestCode == UPDATE_PROFILE) {
             if (resultCode == RESULT_OK) {
-                Uri selectedImageUri = data.getData();
-                try {
-                    setMyImageUri(selectedImageUri);
-                    InputStream myImage = getContentResolver().openInputStream(selectedImageUri);
-                    Bitmap bm2 = BitmapFactory.decodeStream(myImage);
-                    ImageView imagePreview = (ImageView)findViewById(R.id.imagePreview);
-                    imagePreview.setImageBitmap(bm2);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                System.out.println("ABOUT TO RESTART FRAGMENT");
+
+                ViewPagerAdapter adapter = (ViewPagerAdapter)viewPager.getAdapter();
+                MyProfileFragment frg = (MyProfileFragment)adapter.getItem(2);
+                FragmentTransaction fragTransaction = getSupportFragmentManager().beginTransaction();
+                fragTransaction.detach(frg);
+                fragTransaction.attach(frg);
+                fragTransaction.commitAllowingStateLoss();
+
+                // The fragment is supposed to be reloaded by the code above. But it's not.
             }
-        } else {                                            // if we were scanning code
+        } else {
+            // if we were scanning code
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             if (result != null) {
                 if (result.getContents() != null) {
@@ -289,7 +185,11 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new MyCodeFragment(), "MY CODE");
         adapter.addFragment(new ContactsFragment(), "CONTACTS");
-        adapter.addFragment(new MyProfileFragment(), "MY PROFILE");
+        Fragment profileFragment = new MyProfileFragment();
+//        getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.viewpager,profileFragment,"my_profile_view")
+//                .addToBackStack(null).commit();
+        adapter.addFragment(profileFragment, "MY PROFILE");
         viewPager.setAdapter(adapter);
     }
 

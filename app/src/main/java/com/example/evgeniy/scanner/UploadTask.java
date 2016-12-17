@@ -46,7 +46,7 @@ class UploadTask extends AsyncTask<Uri, Void, String> {
     }
 
     protected void onPostExecute(String image_id) {
-        MainActivity act = (MainActivity)this.context;
+        ProfileEditActivity act = (ProfileEditActivity)this.context;
         act.onFinalSave(image_id);
     }
 }

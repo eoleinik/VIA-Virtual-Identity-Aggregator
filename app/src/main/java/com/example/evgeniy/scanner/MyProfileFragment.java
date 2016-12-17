@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.File;
@@ -16,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class MyProfileFragment extends Fragment{
+
 
     public MyProfileFragment() {
         // Required empty public constructor
@@ -27,18 +27,13 @@ public class MyProfileFragment extends Fragment{
             return;
 
         v.findViewById(R.id.linerLayoutView).setVisibility(View.VISIBLE);
-        v.findViewById(R.id.linerLayoutEdit).setVisibility(View.INVISIBLE);
 
         v.findViewById(R.id.buttonEdit).setVisibility(View.VISIBLE);
-        v.findViewById(R.id.buttonSave).setVisibility(View.INVISIBLE);
 
         ((TextView) v.findViewById(R.id.textViewFirstName)).setText(person.getFirstName());
         ((TextView) v.findViewById(R.id.textViewLastName)).setText(person.getLastName());
         ((TextView) v.findViewById(R.id.textViewEmail)).setText(person.getEmail());
         ((TextView) v.findViewById(R.id.textViewPhone)).setText(person.getPhone());
-
-        ProgressBar spinner = (ProgressBar)v.findViewById(R.id.uploadSpinner);
-        spinner.setVisibility(View.GONE);
 
         String imageId = person.getPicture();
 
