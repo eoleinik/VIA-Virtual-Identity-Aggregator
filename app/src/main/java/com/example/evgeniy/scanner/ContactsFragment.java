@@ -16,6 +16,8 @@ public class ContactsFragment extends Fragment{
 
     private static final ArrayList<Person> personList = new ArrayList<>();
 
+    private ContactAdapter contactAdapter;
+
     public ContactsFragment() {
         // Required empty public constructor
     }
@@ -41,7 +43,8 @@ public class ContactsFragment extends Fragment{
 
         updatePersonList(getActivity());
 
-        contactsView.setAdapter(new ContactAdapter(context, personList));
+        contactAdapter = new ContactAdapter(context, personList);
+        contactsView.setAdapter(contactAdapter);
 
         contactsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -54,5 +57,12 @@ public class ContactsFragment extends Fragment{
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        updatePersonList(this.getActivity());
+        contactAdapter.notifyDataSetChanged();
+        super.onResume();
     }
 }

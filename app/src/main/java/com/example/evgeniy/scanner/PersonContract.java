@@ -87,6 +87,7 @@ final class PersonContract {
                 PersonEntry.COLUMN_NAME_EMAIL,
                 PersonEntry.COLUMN_NAME_ADDRESS,
                 PersonEntry.COLUMN_NAME_CONTACT_ID,
+                PersonEntry.COLUMN_NAME_PICTURE_ID
         };
 
         String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
@@ -287,6 +288,11 @@ final class PersonContract {
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            db.execSQL(SQL_DELETE_PEOPLE);
+            onCreate(db);
+        }
+
+        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL(SQL_DELETE_PEOPLE);
             onCreate(db);
         }

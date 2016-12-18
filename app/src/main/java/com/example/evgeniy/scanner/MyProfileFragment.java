@@ -24,8 +24,9 @@ public class MyProfileFragment extends Fragment{
 
     private void loadProfile(View v) {
         Person person = PersonContract.getProfile(getActivity().getApplicationContext());
-        if (person == null)
+        if (person == null) {
             return;
+        }
 
         ((TextView) v.findViewById(R.id.email_address)).setText(person.getEmail());
         ((TextView) v.findViewById(R.id.phone_number)).setText(person.getPhone());
