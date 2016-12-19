@@ -19,17 +19,18 @@ import java.io.InputStream;
 
 public class ProfileEditActivity extends AppCompatActivity {
 
+    static final int SELECT_IMAGE_FROM_GALLERY = 1;
     private Uri myImageUri = null;
 
-    static void saveSuccess(Activity activity, Person person) {
-        Activity parent = activity.getParent();
+    void saveSuccess(Person person) {
+        Activity parent = getParent();
         if (parent != null) {
             ((TextView) parent.findViewById(R.id.email_address)).setText(person.getEmail());
             ((TextView) parent.findViewById(R.id.phone_number)).setText(person.getPhone());
         }
 
-        activity.setResult(RESULT_OK);
-        activity.finish();
+        setResult(RESULT_OK);
+        finish();
     }
 
     public Uri getMyImageUri() {
@@ -39,8 +40,6 @@ public class ProfileEditActivity extends AppCompatActivity {
     public void setMyImageUri(Uri imageUri) {
         this.myImageUri = imageUri;
     }
-
-    static final int SELECT_IMAGE_FROM_GALLERY = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -115,13 +115,16 @@ class Person implements Parcelable {
         if (bitmap == null) {
             FileInputStream in;
 
+            if (picture.equals(""))
+                return null;
+
             try {
                 File sd = context.getFilesDir();
                 File file = new File(sd, picture);
                 in = new FileInputStream(file);
                 bitmap = BitmapFactory.decodeStream(in);
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                System.out.println("Bitmap not found...");
             }
         }
 

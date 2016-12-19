@@ -1,6 +1,5 @@
 package com.example.evgeniy.scanner;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -158,10 +157,7 @@ class DBHandler {
                                 Person person = jsonToPerson(response);
                                 int res = PersonContract.addContact(context, person);
                                 if (res > 0) {
-                                    ContactsFragment.updatePersonList(context);
-                                    Intent detailIntent = new Intent(context, ScrollingProfileActivity.class);
-                                    detailIntent.putExtra("person", person);
-                                    context.startActivity(detailIntent);
+                                    new PhotoManager(context).downloadAndSaveLocally(person);
                                 } else {
                                     Toast.makeText(context, "Contact already added!", Toast.LENGTH_LONG).show();
                                 }
@@ -179,7 +175,13 @@ class DBHandler {
                 });
 
         queue.add(stringRequest);
+    }
 
+    static void contactPhotoDownloaded(Context context, Person person) {
+        ContactsFragment.updatePersonList(context);
+        Intent detailIntent = new Intent(context, ScrollingProfileActivity.class);
+        detailIntent.putExtra("person", person);
+        context.startActivity(detailIntent);
     }
 
     static void updateContacts(final Context context) {
@@ -240,7 +242,8 @@ class DBHandler {
                             person.setId(createdId);
                             PersonContract.saveProfile(context, person);
                             Toast.makeText(context, "Profile created successfully", Toast.LENGTH_SHORT).show();
-                            ProfileEditActivity.saveSuccess((Activity) context, person);
+                            if (context instanceof ProfileEditActivity)
+                                ((ProfileEditActivity) context).saveSuccess(person);
                         }
                         catch (JSONException e) {
                             e.printStackTrace();
@@ -273,7 +276,8 @@ class DBHandler {
                         newPerson.setId(oldPerson.getId());
                         PersonContract.saveProfile(context, newPerson);
                         Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-                        ProfileEditActivity.saveSuccess((Activity) context, newPerson);
+                        if (context instanceof ProfileEditActivity)
+                            ((ProfileEditActivity) context).saveSuccess(newPerson);
                     }
                 },
                 new Response.ErrorListener() {

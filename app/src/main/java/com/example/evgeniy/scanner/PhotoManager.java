@@ -4,8 +4,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.Volley;
 import com.cloudinary.Cloudinary;
 
 import java.io.File;
@@ -15,12 +21,12 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PhotoManager {
+class PhotoManager {
 
+    private final Context context;
     private Cloudinary cloudinary;
-    private Context context;
 
-    public PhotoManager(Context context) {
+    PhotoManager(Context context) {
         Map<String, String> config = new HashMap<>();
         config.put("cloud_name", "dsvdd2buq");
         config.put("api_key", "817523914298379");
@@ -29,7 +35,7 @@ public class PhotoManager {
         this.context = context;
     }
 
-    public void upload(Uri inputUri)  {
+    void upload(Uri inputUri) {
         UploadTask task = new UploadTask();
         task.setCloudinary(this.cloudinary);
         task.setContext(this.context);
@@ -40,7 +46,46 @@ public class PhotoManager {
         }
     }
 
-    public void saveLocally(Uri inputUri, String filename) throws Exception {
+    void downloadAndSaveLocally(final Person person) {
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        ImageRequest imgRequest =
+                new ImageRequest(cloudinary.url().generate(person.getPicture()), new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        FileOutputStream out = null;
+                        try {
+                            File sd = context.getFilesDir();
+                            File file = new File(sd, person.getPicture());
+                            out = new FileOutputStream(file);
+                            response.compress(Bitmap.CompressFormat.PNG, 100, out);
+                            DBHandler.contactPhotoDownloaded(context, person);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if (out != null) {
+                                    out.close();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                }, 0, 0, ImageView.ScaleType.CENTER_CROP, Bitmap.Config.ARGB_8888,
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(context, "Unable to fetch image.", Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+
+        queue.add(imgRequest);
+    }
+
+    void saveLocally(Uri inputUri, String filename) throws Exception {
         // Suitable only for PNG's
         FileOutputStream out = null;
         Exception e_copy = null;

@@ -54,10 +54,12 @@ final class PersonContract {
                 null
         );
 
-        if (c.moveToFirst())
-            profileExists = true;
-
-        c.close();
+        try {
+            if (c.moveToFirst())
+                profileExists = true;
+        } finally {
+            c.close();
+        }
 
         if (profileExists)
             return -1;
@@ -107,11 +109,13 @@ final class PersonContract {
 
         List<Person> people = new ArrayList<>();
 
-        while (c.moveToNext()) {
-            people.add(getPersonFromCursor(c));
+        try {
+            while (c.moveToNext()) {
+                people.add(getPersonFromCursor(c));
+            }
+        } finally {
+            c.close();
         }
-
-        c.close();
         return people;
     }
 
@@ -173,10 +177,12 @@ final class PersonContract {
                 null                                // The sort order
         );
 
-        if (c.moveToFirst())
-            profileExists = true;
-
-        c.close();
+        try {
+            if (c.moveToFirst())
+                profileExists = true;
+        } finally {
+            c.close();
+        }
 
         ContentValues values = new ContentValues();
         values.put(PersonEntry.COLUMN_NAME_CONTACT_ID, person.getId());
@@ -238,12 +244,13 @@ final class PersonContract {
                 null                                // The sort order
         );
 
-        // If there are no results, profile does not exist in DB
-        if (!c.moveToFirst())
-            return null;
-
-        Person person = getPersonFromCursor(c);
-        c.close();
+        Person person = null;
+        try {
+            if (c.moveToFirst())
+                person = getPersonFromCursor(c);
+        } finally {
+            c.close();
+        }
         return person;
     }
 

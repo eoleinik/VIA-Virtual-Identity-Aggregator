@@ -14,16 +14,15 @@ class UploadTask extends AsyncTask<Uri, Void, String> {
 
     private Cloudinary cloudinary;
     private Context context;
+    private Exception exception;
 
-    public void setCloudinary(Cloudinary cloudinary) {
+    void setCloudinary(Cloudinary cloudinary) {
         this.cloudinary = cloudinary;
     }
 
     public void setContext(Context context) {
         this.context = context;
     }
-
-    private Exception exception;
 
     protected String doInBackground(Uri... inputUri) {
         String image_id = null;
@@ -33,7 +32,7 @@ class UploadTask extends AsyncTask<Uri, Void, String> {
                     "format", "png"
             );
             InputStream imageStream = context.getContentResolver().openInputStream(imageUri);
-            Map<String, Object> uploadResult = this.cloudinary.uploader().upload(imageStream, uploadParams);
+            Map uploadResult = this.cloudinary.uploader().upload(imageStream, uploadParams);
             String public_id = (String)uploadResult.get("public_id");
             String format = (String)uploadResult.get("format");
             image_id = public_id+"."+format;
