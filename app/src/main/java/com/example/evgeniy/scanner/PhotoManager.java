@@ -24,7 +24,7 @@ import java.util.Map;
 class PhotoManager {
 
     private final Context context;
-    private Cloudinary cloudinary;
+    private final Cloudinary cloudinary;
 
     PhotoManager(Context context) {
         Map<String, String> config = new HashMap<>();

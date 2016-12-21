@@ -19,7 +19,7 @@ import java.io.InputStream;
 
 public class ProfileEditActivity extends AppCompatActivity {
 
-    static final int SELECT_IMAGE_FROM_GALLERY = 1;
+    private static final int SELECT_IMAGE_FROM_GALLERY = 1;
     private Uri myImageUri = null;
 
     void saveSuccess(Person person) {
@@ -33,11 +33,11 @@ public class ProfileEditActivity extends AppCompatActivity {
         finish();
     }
 
-    public Uri getMyImageUri() {
+    private Uri getMyImageUri() {
         return myImageUri;
     }
 
-    public void setMyImageUri(Uri imageUri) {
+    private void setMyImageUri(Uri imageUri) {
         this.myImageUri = imageUri;
     }
 

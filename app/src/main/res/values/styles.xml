@@ -1,6 +1,8 @@
 <resources>
 
-    <style name="MyMaterialTheme" parent="MyMaterialTheme.Base"/>
+    <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
+        <item name="android:background">#B6B6B6</item>
+    </style>
 
     <!-- Base application theme. -->
     <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">

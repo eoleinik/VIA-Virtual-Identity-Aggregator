@@ -101,7 +101,6 @@ class DBHandler {
 
     private static void addContact(final Context context, int myId, final int theirId) {
         // Add relationship to remote
-        boolean success = true;
         RequestQueue queue = Volley.newRequestQueue(context);
         String url_me_them = String.format("http://api.a16_sd206.studev.groept.be/addContact/%s/%s",
                 myId, theirId);

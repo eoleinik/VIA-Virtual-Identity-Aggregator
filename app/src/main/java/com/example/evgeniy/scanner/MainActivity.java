@@ -6,12 +6,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -23,12 +21,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-
 import android.widget.TextView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -36,15 +32,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int UPDATE_PROFILE = 2;
     public static boolean isConnected = false;
-
-    static final int UPDATE_PROFILE = 2;
-
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-
-    private int[] tabIcons = {
+    private final int[] tabIcons = {
             R.drawable.qr_code,
             R.drawable.contacts,
             R.drawable.person
@@ -55,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
             new CheckInternetTask().execute();
         }
     };
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     private void updateConnected() {
         final TextView connectionStatusText = (TextView) findViewById(R.id.connectionStatus);
@@ -139,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(NetworkStatusReceiver, new IntentFilter(
                 ConnectivityManager.CONNECTIVITY_ACTION));
 //        Topbar:
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar == null)

@@ -207,6 +207,7 @@ final class PersonContract {
                     selectionArgs);
         } else {
             values.put(PersonEntry.COLUMN_NAME_IS_ME, 1);
+
             return (int) db.insert(
                     PersonEntry.PEOPLE_TABLE_NAME,
                     null,

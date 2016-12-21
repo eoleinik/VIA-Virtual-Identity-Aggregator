@@ -248,9 +248,9 @@
 
 
 <android.support.design.widget.CoordinatorLayout
-    android:id="@+id/main_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -265,20 +265,20 @@
 
                 <ImageView
                     android:id="@+id/my_picture"
-                    android:maxHeight="218dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/contact_image_large"
+                    android:maxHeight="218dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/target" />
 
                 <include
+                    android:id="@+id/profileInfo"
                     layout="@layout/content_my_profile"
-                    android:layout_below="@id/my_picture"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/profileInfo"/>
+                    android:layout_below="@id/my_picture" />
 
             </RelativeLayout>
 
@@ -287,11 +287,11 @@
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        app:fabSize="normal"
-        android:onClick="onEditClick"
+        android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:onClick="onEditClick"
         android:src="@drawable/ic_mode_edit_white_36dp"
+        app:fabSize="normal"
         app:layout_anchor="@id/info"
         app:layout_anchorGravity="bottom|right|end" />
 

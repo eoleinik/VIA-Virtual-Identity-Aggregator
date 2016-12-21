@@ -27,7 +27,7 @@
 
             <ProgressBar
                 android:id="@+id/uploadSpinner"
-                style="@android:style/Widget.Material.Light.ProgressBar.Large"
+                style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -37,14 +37,15 @@
                 android:id="@+id/imagePreview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true" />
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/image_preview" />
 
             <Button
                 android:id="@+id/chooseFromGalleryButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="openGallery"
-                android:text="Choose photo from gallery" />
+                android:text="@string/choose_photo" />
 
             <EditText
                 android:id="@+id/editTextFirstName"
