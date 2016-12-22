@@ -13,7 +13,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -98,12 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
                 ViewPagerAdapter adapter = (ViewPagerAdapter)viewPager.getAdapter();
                 MyProfileFragment frg = (MyProfileFragment)adapter.getItem(2);
-                FragmentTransaction fragTransaction = getSupportFragmentManager().beginTransaction();
-                fragTransaction.detach(frg);
-                fragTransaction.attach(frg);
-                fragTransaction.commitAllowingStateLoss();
-
-                // The fragment is supposed to be reloaded by the code above. But it's not.
+                frg.loadProfile(frg.getView());
             }
         } else {
             // if we were scanning code

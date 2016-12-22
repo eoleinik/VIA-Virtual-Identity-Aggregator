@@ -3,6 +3,7 @@ package com.example.evgeniy.scanner;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -39,7 +40,7 @@ class UploadTask extends AsyncTask<Uri, Void, String> {
             new PhotoManager(context).saveLocally(imageUri, image_id);
         } catch(Exception e) {
             e.printStackTrace();
-            System.out.println("Unable to upload photo");
+            Toast.makeText(context, "Unable to upload photo", Toast.LENGTH_LONG).show();
         }
         return image_id;
     }

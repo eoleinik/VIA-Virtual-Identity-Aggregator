@@ -1,6 +1,5 @@
 package com.example.evgeniy.scanner;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,13 +21,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     private static final int SELECT_IMAGE_FROM_GALLERY = 1;
     private Uri myImageUri = null;
 
-    void saveSuccess(Person person) {
-        Activity parent = getParent();
-        if (parent != null) {
-            ((TextView) parent.findViewById(R.id.email_address)).setText(person.getEmail());
-            ((TextView) parent.findViewById(R.id.phone_number)).setText(person.getPhone());
-        }
-
+    void saveSuccess() {
         setResult(RESULT_OK);
         finish();
     }
@@ -72,6 +65,8 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
     }
 
+    //void updateProfile
+
     public void openGallery(View view) {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -89,6 +84,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                     setMyImageUri(selectedImageUri);
                     InputStream myImage = getContentResolver().openInputStream(selectedImageUri);
                     Bitmap bm2 = BitmapFactory.decodeStream(myImage);
+
                     ImageView imagePreview = (ImageView) findViewById(R.id.imagePreview);
                     imagePreview.setImageBitmap(bm2);
                 } catch (Exception e) {

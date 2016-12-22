@@ -22,7 +22,7 @@ public class MyProfileFragment extends Fragment{
         // Required empty public constructor
     }
 
-    private void loadProfile(View v) {
+    void loadProfile(View v) {
         Person person = PersonContract.getProfile(getActivity().getApplicationContext());
         if (person == null) {
             return;

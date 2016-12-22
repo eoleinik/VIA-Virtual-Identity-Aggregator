@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 class DBHandler {
@@ -31,7 +32,6 @@ class DBHandler {
             String phone = jsonObject.getString("phone");
             String address = jsonObject.getString("address");
             String timestamp = jsonObject.getString("timestamp");
-            // TODO: picture
             String picture = jsonObject.getString("picture");
             return new Person(id, timestamp, firstName, lastName, phone, email, address, picture);
 
@@ -184,12 +184,17 @@ class DBHandler {
     }
 
     static void updateContacts(final Context context) {
-        // getContacts
+        ArrayList<Person> contactList = (ArrayList<Person>) PersonContract.getContacts(context);
+
         // getContacts from remote
         // are there ids in remote that are not present in local?
         //      add contact
         // compare timestamps
         //      if changed update contact and re download image
+    }
+
+    static ArrayList<Person> getContactsFromRemote(final Context context) {
+        return null;
     }
 
     static void saveProfile(Person person, Context context) {
@@ -242,7 +247,7 @@ class DBHandler {
                             PersonContract.saveProfile(context, person);
                             Toast.makeText(context, "Profile created successfully", Toast.LENGTH_SHORT).show();
                             if (context instanceof ProfileEditActivity)
-                                ((ProfileEditActivity) context).saveSuccess(person);
+                                ((ProfileEditActivity) context).saveSuccess();
                         }
                         catch (JSONException e) {
                             e.printStackTrace();
@@ -276,7 +281,7 @@ class DBHandler {
                         PersonContract.saveProfile(context, newPerson);
                         Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show();
                         if (context instanceof ProfileEditActivity)
-                            ((ProfileEditActivity) context).saveSuccess(newPerson);
+                            ((ProfileEditActivity) context).saveSuccess();
                     }
                 },
                 new Response.ErrorListener() {
