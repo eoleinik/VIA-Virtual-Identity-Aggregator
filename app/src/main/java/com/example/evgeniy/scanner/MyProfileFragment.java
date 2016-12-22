@@ -1,5 +1,7 @@
 package com.example.evgeniy.scanner;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,21 +18,22 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class MyProfileFragment extends Fragment{
-
+    private View view_static;
 
     public MyProfileFragment() {
         // Required empty public constructor
     }
 
-    void loadProfile(View v) {
-        Person person = PersonContract.getProfile(getActivity().getApplicationContext());
+    void loadProfile() {
+        Person person = PersonContract.getProfile(view_static.getContext());
         if (person == null) {
             return;
         }
 
-        ((TextView) v.findViewById(R.id.email_address)).setText(person.getEmail());
-        ((TextView) v.findViewById(R.id.phone_number)).setText(person.getPhone());
-        ((TextView) v.findViewById(R.id.address)).setText(person.getAddress());
+        ((TextView) view_static.findViewById(R.id.email_address)).setText(person.getEmail());
+        ((TextView) view_static.findViewById(R.id.phone_number)).setText(person.getPhone());
+        ((TextView) view_static.findViewById(R.id.address)).setText(person.getAddress());
+        ((TextView) view_static.findViewById(R.id.my_name)).setText(person.getFullName());
 
         String imageId = person.getPicture();
         if (imageId != null) {
@@ -39,7 +42,7 @@ public class MyProfileFragment extends Fragment{
                 File myImage = new File(sd, imageId);
                 FileInputStream in = new FileInputStream(myImage);
                 Bitmap bitmap = BitmapFactory.decodeStream(in);
-                ImageView imageView = (ImageView) v.findViewById(R.id.my_picture);
+                ImageView imageView = (ImageView) view_static.findViewById(R.id.my_picture);
                 imageView.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -58,14 +61,14 @@ public class MyProfileFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_my_profile, container, false);
-
+        view_static = v;
         if (PersonContract.getProfile(v.getContext()) == null) {
             Intent detailIntent = new Intent(v.getContext(), ProfileEditActivity.class);
             startActivity(detailIntent);
             return v;
         } else {
             // Inflate the layout for this fragment
-            loadProfile(v);
+            loadProfile();
             return v;
         }
     }

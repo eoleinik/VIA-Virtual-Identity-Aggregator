@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
                 ViewPagerAdapter adapter = (ViewPagerAdapter)viewPager.getAdapter();
                 MyProfileFragment frg = (MyProfileFragment)adapter.getItem(2);
-                frg.loadProfile(frg.getView());
+                frg.loadProfile();
             }
         } else {
             // if we were scanning code
