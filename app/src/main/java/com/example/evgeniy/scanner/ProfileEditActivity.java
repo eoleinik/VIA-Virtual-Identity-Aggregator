@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -81,12 +82,31 @@ public class ProfileEditActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Uri selectedImageUri = data.getData();
                 try {
-                    setMyImageUri(selectedImageUri);
+                    // select image
                     InputStream myImage = getContentResolver().openInputStream(selectedImageUri);
-                    Bitmap bm2 = BitmapFactory.decodeStream(myImage);
+                    Bitmap bitmap = BitmapFactory.decodeStream(myImage);
+
+                    // scale down
+                    float aspectRatio = bitmap.getWidth() /
+                            (float) bitmap.getHeight();
+                    int width = 1000;
+                    int height = Math.round(width / aspectRatio);
+                    bitmap = Bitmap.createScaledBitmap(
+                            bitmap, width, height, false);
+
+                    // save locally
+                    PhotoManager pm = new PhotoManager(this);
+                    String imageName = getString(R.string.my_profile_image);
+                    pm.saveLocally(bitmap, imageName);
+                    File sd = getFilesDir();
+                    File file = new File(sd, imageName);
+                    Uri localUri = Uri.fromFile(file);
+
+                    // "swap" uri
+                    setMyImageUri(localUri);
 
                     ImageView imagePreview = (ImageView) findViewById(R.id.imagePreview);
-                    imagePreview.setImageBitmap(bm2);
+                    imagePreview.setImageBitmap(bitmap);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

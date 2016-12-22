@@ -8,6 +8,7 @@
     <string name="email">Email</string>
     <string name="address">Address</string>
     <string name="my_qr_code">my_qr_code.png</string>
+    <string name="my_profile_image">my_profile_image.png</string>
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected</string>
     <string name="send_sms">Send SMS</string>

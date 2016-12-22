@@ -113,4 +113,30 @@ class PhotoManager {
         }
     }
 
+    void saveLocally(Bitmap inputBitmap, String filename) throws Exception {
+        // Suitable only for PNG's
+        FileOutputStream out = null;
+        Exception e_copy = null;
+        try {
+            File sd = context.getFilesDir();
+            File file = new File(sd, filename);
+            out = new FileOutputStream(file);
+            inputBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            // PNG is a lossless format, the compression factor (100) is ignored
+        } catch (Exception e) {
+            e_copy = e;
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (e_copy != null) {
+            throw e_copy;
+        }
+    }
+
 }

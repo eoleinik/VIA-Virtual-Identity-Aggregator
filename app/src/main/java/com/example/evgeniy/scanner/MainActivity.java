@@ -172,9 +172,6 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new MyCodeFragment(), "MY CODE");
         adapter.addFragment(new ContactsFragment(), "CONTACTS");
         Fragment profileFragment = new MyProfileFragment();
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.viewpager,profileFragment,"my_profile_view")
-//                .addToBackStack(null).commit();
         adapter.addFragment(profileFragment, "MY PROFILE");
         viewPager.setAdapter(adapter);
     }
