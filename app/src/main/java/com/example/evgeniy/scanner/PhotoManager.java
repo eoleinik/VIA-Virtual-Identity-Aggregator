@@ -11,7 +11,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
 import com.cloudinary.Cloudinary;
 
 import java.io.File;
@@ -46,8 +45,13 @@ class PhotoManager {
         }
     }
 
-    void downloadAndSaveLocally(final Person person) {
-        RequestQueue queue = Volley.newRequestQueue(context);
+    void downloadAndSaveLocally(final Person person, final boolean returnToContactDetails) {
+        RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
+
+        if (person.getPicture().isEmpty()) {
+            DBHandler.contactPhotoDownloaded(context, person, returnToContactDetails);
+            return;
+        }
 
         ImageRequest imgRequest =
                 new ImageRequest(cloudinary.url().generate(person.getPicture()), new Response.Listener<Bitmap>() {
@@ -59,7 +63,7 @@ class PhotoManager {
                             File file = new File(sd, person.getPicture());
                             out = new FileOutputStream(file);
                             response.compress(Bitmap.CompressFormat.PNG, 100, out);
-                            DBHandler.contactPhotoDownloaded(context, person);
+                            DBHandler.contactPhotoDownloaded(context, person, returnToContactDetails);
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {

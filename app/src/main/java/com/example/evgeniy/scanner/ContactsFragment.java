@@ -14,17 +14,15 @@ import java.util.ArrayList;
 
 public class ContactsFragment extends Fragment{
 
-    private static final ArrayList<Person> personList = new ArrayList<>();
-
     private ContactAdapter contactAdapter;
 
     public ContactsFragment() {
         // Required empty public constructor
     }
 
-    public static void updatePersonList(Context context) {
-        personList.clear();
-        personList.addAll(PersonContract.getContacts(context));
+    public void updatePersonList(final Context context) {
+        if (contactAdapter != null)
+            contactAdapter.updateDataSource(PersonContract.getContacts(context));
     }
 
     @Override
@@ -43,13 +41,13 @@ public class ContactsFragment extends Fragment{
 
         updatePersonList(getActivity());
 
-        contactAdapter = new ContactAdapter(context, personList);
+        contactAdapter = new ContactAdapter(context, new ArrayList<Person>());
         contactsView.setAdapter(contactAdapter);
 
         contactsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Person selectedPerson = personList.get(position);
+                Person selectedPerson = (Person) contactAdapter.getItem(position);
                 Intent detailIntent = new Intent(view.getContext(), ScrollingProfileActivity.class);
                 detailIntent.putExtra("person", selectedPerson);
                 startActivity(detailIntent);

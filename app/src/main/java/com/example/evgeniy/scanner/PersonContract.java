@@ -23,9 +23,10 @@ final class PersonContract {
                     PersonEntry.COLUMN_NAME_PHONE + " TEXT," +
                     PersonEntry.COLUMN_NAME_PICTURE_ID + " TEXT," +
                     PersonEntry.COLUMN_NAME_IMAGE_FILENAME + " BLOB)";
-
     private static final String SQL_DELETE_PEOPLE =
             "DROP TABLE IF EXISTS " + PersonEntry.PEOPLE_TABLE_NAME;
+    // Cache profile id since it is requested often
+    private static int myId = -1;
 
     private PersonContract() {
     }
@@ -65,6 +66,7 @@ final class PersonContract {
             return -1;
 
         ContentValues values = new ContentValues();
+        values.put(PersonEntry.COLUMN_NAME_TIMESTAMP, person.getTimestamp());
         values.put(PersonEntry.COLUMN_NAME_FIRST_NAME, person.getFirstName());
         values.put(PersonEntry.COLUMN_NAME_LAST_NAME, person.getLastName());
         values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
@@ -128,6 +130,19 @@ final class PersonContract {
 
         String selection = PersonEntry.COLUMN_NAME_CONTACT_ID + " = ?";
         String[] selectionArgs = {Integer.toString(person.getId())};
+
+        return db.delete(
+                PersonEntry.PEOPLE_TABLE_NAME,
+                selection,
+                selectionArgs);
+    }
+
+    static int removeContact(Context context, int id) {
+        DbHelper dbHelper = new DbHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String selection = PersonEntry.COLUMN_NAME_CONTACT_ID + " = ?";
+        String[] selectionArgs = {Integer.toString(id)};
 
         return db.delete(
                 PersonEntry.PEOPLE_TABLE_NAME,
@@ -247,12 +262,22 @@ final class PersonContract {
 
         Person person = null;
         try {
-            if (c.moveToFirst())
+            if (c.moveToFirst()) {
                 person = getPersonFromCursor(c);
+                myId = person.getId();
+            }
         } finally {
             c.close();
         }
+
         return person;
+    }
+
+    static int getMyId(Context context) {
+        if (myId == -1)
+            getProfile(context);
+
+        return myId;
     }
 
     private static Person getPersonFromCursor(Cursor c) {

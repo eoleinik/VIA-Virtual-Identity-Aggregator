@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -11,13 +12,16 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 class DBHandler {
@@ -54,7 +58,6 @@ class DBHandler {
             Toast.makeText(context, "Profile must be created before adding contacts", Toast.LENGTH_LONG).show();
             return;
         }
-        final int myId = me.getId();
 
         try {
             jsonObject = new JSONObject(json);
@@ -70,7 +73,7 @@ class DBHandler {
         }
 
         // Check person exists
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
         String url = String.format("http://api.a16_sd206.studev.groept.be/getPersonById/%s", id);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -82,7 +85,7 @@ class DBHandler {
                             if (jArray.length() == 0)
                                 Toast.makeText(context, "Invalid QR code", Toast.LENGTH_LONG).show();
                             else
-                                DBHandler.addContact(context, myId, id);
+                                DBHandler.addContact(context, PersonContract.getMyId(context), id);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -101,7 +104,7 @@ class DBHandler {
 
     private static void addContact(final Context context, int myId, final int theirId) {
         // Add relationship to remote
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
         String url_me_them = String.format("http://api.a16_sd206.studev.groept.be/addContact/%s/%s",
                 myId, theirId);
         String url_them_me = String.format("http://api.a16_sd206.studev.groept.be/addContact/%s/%s",
@@ -112,7 +115,7 @@ class DBHandler {
                     @Override
                     public void onResponse(String response) {
                         Log.d("MyApp", response);
-                        getNewContact(context, theirId);
+                        getNewContact(context, theirId, true);
                     }
                 },
                 new Response.ErrorListener() {
@@ -140,8 +143,40 @@ class DBHandler {
         queue.add(secondRequest);
     }
 
-    private static void getNewContact(final Context context, final int id) {
-        RequestQueue queue = Volley.newRequestQueue(context);
+    static void removeContact(final Context context, final int theirId) {
+        RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
+        String url = String.format("http://api.a16_sd206.studev.groept.be/removeContact/%s/%s",
+                PersonContract.getMyId(context), theirId);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("MyApp", response);
+                        PersonContract.removeContact(context, theirId);
+                        Intent mainActivityIntent = new Intent(context, MainActivity.class);
+                        context.startActivity(mainActivityIntent);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("MyApp", error.getMessage());
+                    }
+                });
+
+        queue.add(stringRequest);
+    }
+
+    /**
+     * Gets contact from remote and add to local DB.
+     *
+     * @param context                Main activity context
+     * @param id                     ID of contact to be added
+     * @param returnToContactDetails Is this contact being added as a result of QRCode scan?
+     *                               If so, contact details will be brought up afterwards, otherwise not.
+     */
+    private static void getNewContact(final Context context, final int id, final boolean returnToContactDetails) {
+        RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
         String url = String.format("http://api.a16_sd206.studev.groept.be/getPersonById/%s", id);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -156,7 +191,7 @@ class DBHandler {
                                 Person person = jsonToPerson(response);
                                 int res = PersonContract.addContact(context, person);
                                 if (res > 0) {
-                                    new PhotoManager(context).downloadAndSaveLocally(person);
+                                    new PhotoManager(context).downloadAndSaveLocally(person, returnToContactDetails);
                                 } else {
                                     Toast.makeText(context, "Contact already added!", Toast.LENGTH_LONG).show();
                                 }
@@ -176,25 +211,135 @@ class DBHandler {
         queue.add(stringRequest);
     }
 
-    static void contactPhotoDownloaded(Context context, Person person) {
-        ContactsFragment.updatePersonList(context);
+    /**
+     * Gets contact from remote and update local DB.
+     *
+     * @param context Application context
+     * @param id      ID of contact to be addedrwise not.
+     */
+    private static void updateContact(final Context context, final int id) {
+        RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
+        String url = String.format("http://api.a16_sd206.studev.groept.be/getPersonById/%s", id);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("MyApp", response);
+                        try {
+                            JSONArray jArray = new JSONArray(response);
+                            if (jArray.length() == 0)
+                                Toast.makeText(context, "Invalid QR code", Toast.LENGTH_LONG).show();
+                            else {
+                                Person person = jsonToPerson(response);
+                                int res = PersonContract.updateContact(context, person);
+                                if (res > 0) {
+                                    new PhotoManager(context).downloadAndSaveLocally(person, false);
+                                } else {
+                                    Toast.makeText(context, "Contact already added!", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("MyApp", error.getMessage());
+                    }
+                });
+
+        queue.add(stringRequest);
+    }
+
+    static void contactPhotoDownloaded(Context context, Person person, final boolean returnToContactDetails) {
+        if (context instanceof MainActivity) {
+            ContactsFragment frg = (ContactsFragment) ((MainActivity) context).getViewAdapter().getItem(1);
+            frg.updatePersonList(context);
+        }
+
+        if (!returnToContactDetails)
+            return;
+
         Intent detailIntent = new Intent(context, ScrollingProfileActivity.class);
         detailIntent.putExtra("person", person);
         context.startActivity(detailIntent);
     }
 
-    static void updateContacts(final Context context) {
-        ArrayList<Person> contactList = (ArrayList<Person>) PersonContract.getContacts(context);
-
-        // getContacts from remote
-        // are there ids in remote that are not present in local?
-        //      add contact
-        // compare timestamps
-        //      if changed update contact and re download image
+    static void startUpdateContacts(final Context context) {
+        int myId = PersonContract.getMyId(context);
+        if (myId == -1)
+            return;
+        // Once contacts & timestamps have been fetched, updateContacts will be called
+        getContactTimestamps(context, myId);
     }
 
-    static ArrayList<Person> getContactsFromRemote(final Context context) {
-        return null;
+    /**
+     * Gets local contacts and compares with up to date contactTimestamps.
+     * Any contacts with differing timestamps will be re-downloaded.
+     *
+     * @param context           Main activity context
+     * @param contactTimestamps HashMap of timestamps with contact id as key
+     */
+    private static void updateContacts(final Context context, SparseArray<String> contactTimestamps) {
+        ArrayList<Person> contactList = (ArrayList<Person>) PersonContract.getContacts(context);
+        ArrayList<Integer> contactIds = new ArrayList<>();
+
+        for (Person contact : contactList)
+            contactIds.add(contact.getId());
+
+        for (Person contact : contactList) {
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.UK);
+            try {
+                Date newTime = formatter.parse(contactTimestamps.get(contact.getId()));
+                Date oldTime = formatter.parse(contact.getTimestamp());
+
+                if (newTime.compareTo(oldTime) > 0)
+                    updateContact(context, contact.getId());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (int i = 0; i < contactTimestamps.size(); i++) {
+            int contactId = contactTimestamps.keyAt(i);
+
+            // If contactId from remote is not in local, get contact (will also add to local)
+            if (!contactIds.contains(contactId))
+                getNewContact(context, contactId, false);
+        }
+    }
+
+    private static void getContactTimestamps(final Context context, int id) {
+        RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
+        String url = String.format("http://api.a16_sd206.studev.groept.be/getContactTimestamps/%s", id);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("MyApp", response);
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            SparseArray<String> contactTimestamps = new SparseArray<>();
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject obj = jsonArray.getJSONObject(i);
+                                contactTimestamps.put(obj.getInt("contact"), obj.getString("timestamp"));
+                            }
+                            updateContacts(context, contactTimestamps);
+                        } catch (JSONException e) {
+                            Log.d("MyApp", "Unable to parse contact timestamps JSON");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("MyApp", error.getMessage());
+
+                    }
+                });
+        queue.add(stringRequest);
     }
 
     static void saveProfile(Person person, Context context) {
@@ -209,7 +354,7 @@ class DBHandler {
 
     private static void createNewPerson(final Person person, final Context context) {
         // if no local ID
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
         String url = String.format("http://api.a16_sd206.studev.groept.be/createPerson/%s/%s/%s/%s/%s/%s",
                 person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone(), person.getAddress(), person.getPicture());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -232,7 +377,7 @@ class DBHandler {
     }
 
     private static void assignNewlyCreatedId(final Person person, final Context context) {
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
         String url = String.format("http://api.a16_sd206.studev.groept.be/getPersonByAttributes/%s/%s/%s/%s",
                 person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -269,7 +414,7 @@ class DBHandler {
 
     private static void updateExistingPerson(final Person oldPerson, final Person newPerson, final Context context) {
         // if no local ID
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
         String url = String.format(Locale.UK, "http://api.a16_sd206.studev.groept.be/updatePerson/%s/%s/%s/%s/%s/%s/%d",
                 newPerson.getFirstName(), newPerson.getLastName(), newPerson.getEmail(), newPerson.getPhone(), newPerson.getAddress(), newPerson.getPicture(), oldPerson.getId());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

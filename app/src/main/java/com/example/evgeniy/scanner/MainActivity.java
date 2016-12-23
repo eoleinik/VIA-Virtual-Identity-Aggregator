@@ -71,6 +71,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public ViewPagerAdapter getViewAdapter() {
+        return (ViewPagerAdapter) viewPager.getAdapter();
+    }
+
     public void scanBarcodeCustomLayout(View view) {
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setCaptureActivity(AnyOrientationCaptureActivity.class);
@@ -79,6 +83,10 @@ public class MainActivity extends AppCompatActivity {
         integrator.setOrientationLocked(false);
         integrator.setBeepEnabled(false);
         integrator.initiateScan();
+    }
+
+    public void onUpdate(View view) {
+        DBHandler.startUpdateContacts(this);
     }
 
     //region  Profile fragment

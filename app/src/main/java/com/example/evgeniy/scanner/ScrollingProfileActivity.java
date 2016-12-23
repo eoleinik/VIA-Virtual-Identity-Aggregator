@@ -1,6 +1,5 @@
 package com.example.evgeniy.scanner;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -75,9 +74,7 @@ public class ScrollingProfileActivity extends AppCompatActivity {
     }
 
     public void onRemoveClick(View view) {
-        if (PersonContract.removeContact(this, person) == -1)
-            return;
-        Intent mainActivityIntent = new Intent(view.getContext(), MainActivity.class);
-        startActivity(mainActivityIntent);
+        DBHandler.removeContact(this, person.getId());
+        // After contact removed (async), will go back to main activity
     }
 }
