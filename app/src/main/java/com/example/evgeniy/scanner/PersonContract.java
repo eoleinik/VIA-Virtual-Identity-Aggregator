@@ -22,11 +22,25 @@ final class PersonContract {
                     PersonEntry.COLUMN_NAME_EMAIL + " TEXT," +
                     PersonEntry.COLUMN_NAME_PHONE + " TEXT," +
                     PersonEntry.COLUMN_NAME_PICTURE_ID + " TEXT," +
-                    PersonEntry.COLUMN_NAME_FACEBOOK + " TEXT)";
+                    PersonEntry.COLUMN_NAME_FACEBOOK + " TEXT," +
+                    PersonEntry.COLUMN_NAME_TWITTER + " TEXT)";
     private static final String SQL_DELETE_PEOPLE =
             "DROP TABLE IF EXISTS " + PersonEntry.PEOPLE_TABLE_NAME;
     // Cache profile id since it is requested often
     private static int myId = -1;
+
+    private static String[] allFields = {
+            PersonEntry.COLUMN_NAME_TIMESTAMP,
+            PersonEntry.COLUMN_NAME_FIRST_NAME,
+            PersonEntry.COLUMN_NAME_LAST_NAME,
+            PersonEntry.COLUMN_NAME_PHONE,
+            PersonEntry.COLUMN_NAME_EMAIL,
+            PersonEntry.COLUMN_NAME_ADDRESS,
+            PersonEntry.COLUMN_NAME_CONTACT_ID,
+            PersonEntry.COLUMN_NAME_PICTURE_ID,
+            PersonEntry.COLUMN_NAME_FACEBOOK,
+            PersonEntry.COLUMN_NAME_TWITTER
+    };
 
     private PersonContract() {
     }
@@ -66,17 +80,8 @@ final class PersonContract {
             return -1;
 
         ContentValues values = new ContentValues();
-        values.put(PersonEntry.COLUMN_NAME_TIMESTAMP, person.getTimestamp());
-        values.put(PersonEntry.COLUMN_NAME_FIRST_NAME, person.getFirstName());
-        values.put(PersonEntry.COLUMN_NAME_LAST_NAME, person.getLastName());
-        values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
-        values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
-        values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
-        values.put(PersonEntry.COLUMN_NAME_CONTACT_ID, person.getId());
+        putAllValues(values, person);
         values.put(PersonEntry.COLUMN_NAME_IS_ME, 0);
-        values.put(PersonEntry.COLUMN_NAME_PICTURE_ID, person.getPicture());
-        values.put(PersonEntry.COLUMN_NAME_FACEBOOK, person.getFacebook());
-
         return (int) db.insert(PersonEntry.PEOPLE_TABLE_NAME, null, values);
     }
 
@@ -84,25 +89,13 @@ final class PersonContract {
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String[] projection = {
-                PersonEntry.COLUMN_NAME_TIMESTAMP,
-                PersonEntry.COLUMN_NAME_FIRST_NAME,
-                PersonEntry.COLUMN_NAME_LAST_NAME,
-                PersonEntry.COLUMN_NAME_PHONE,
-                PersonEntry.COLUMN_NAME_EMAIL,
-                PersonEntry.COLUMN_NAME_ADDRESS,
-                PersonEntry.COLUMN_NAME_CONTACT_ID,
-                PersonEntry.COLUMN_NAME_PICTURE_ID,
-                PersonEntry.COLUMN_NAME_FACEBOOK
-        };
-
         String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
         String[] selectionArgs = {"0"};
         String sortOrder = PersonEntry.COLUMN_NAME_LAST_NAME + " ASC";
 
         Cursor c = db.query(
                 PersonEntry.PEOPLE_TABLE_NAME,
-                projection,
+                allFields,
                 selection,
                 selectionArgs,
                 null,
@@ -160,13 +153,7 @@ final class PersonContract {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(PersonEntry.COLUMN_NAME_TIMESTAMP, person.getTimestamp());
-        values.put(PersonEntry.COLUMN_NAME_FIRST_NAME, person.getFirstName());
-        values.put(PersonEntry.COLUMN_NAME_LAST_NAME, person.getLastName());
-        values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
-        values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
-        values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
-        values.put(PersonEntry.COLUMN_NAME_FACEBOOK, person.getFacebook());
+        putAllValues(values, person);
 
         String selection = PersonEntry.COLUMN_NAME_CONTACT_ID + " = ?";
         String[] selectionArgs = {Integer.toString(person.getId())};
@@ -203,15 +190,7 @@ final class PersonContract {
         }
 
         ContentValues values = new ContentValues();
-        values.put(PersonEntry.COLUMN_NAME_CONTACT_ID, person.getId());
-        values.put(PersonEntry.COLUMN_NAME_TIMESTAMP, person.getFirstName());
-        values.put(PersonEntry.COLUMN_NAME_FIRST_NAME, person.getFirstName());
-        values.put(PersonEntry.COLUMN_NAME_LAST_NAME, person.getLastName());
-        values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
-        values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
-        values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
-        values.put(PersonEntry.COLUMN_NAME_PICTURE_ID, person.getPicture());
-        values.put(PersonEntry.COLUMN_NAME_FACEBOOK, person.getFacebook());
+        putAllValues(values, person);
 
         String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
         String[] selectionArgs = {"1"};
@@ -240,24 +219,14 @@ final class PersonContract {
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String[] projection = {
-                PersonEntry.COLUMN_NAME_TIMESTAMP,
-                PersonEntry.COLUMN_NAME_FIRST_NAME,
-                PersonEntry.COLUMN_NAME_LAST_NAME,
-                PersonEntry.COLUMN_NAME_PHONE,
-                PersonEntry.COLUMN_NAME_EMAIL,
-                PersonEntry.COLUMN_NAME_ADDRESS,
-                PersonEntry.COLUMN_NAME_CONTACT_ID,
-                PersonEntry.COLUMN_NAME_PICTURE_ID,
-                PersonEntry.COLUMN_NAME_FACEBOOK
-        };
+
 
         String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
         String[] selectionArgs = {"1"};
 
         Cursor c = db.query(
                 PersonEntry.PEOPLE_TABLE_NAME,      // The table to query
-                projection,                         // Columns to return
+                allFields,                          // Columns to return
                 selection,                          // Columns for WHERE clause
                 selectionArgs,                      // the values for WHERE clause
                 null,                               // Don't group the rows
@@ -295,8 +264,22 @@ final class PersonContract {
         String address = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_ADDRESS));
         String pictureId = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_PICTURE_ID));
         String facebook = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_FACEBOOK));
+        String twitter = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_TWITTER));
 
-        return new Person(id, timestamp, firstName, lastName, phone, email, address, pictureId, facebook);
+        return new Person(id, timestamp, firstName, lastName, phone, email, address, pictureId, facebook, twitter);
+    }
+
+    private static void putAllValues(ContentValues values, Person person) {
+        values.put(PersonEntry.COLUMN_NAME_TIMESTAMP, person.getTimestamp());
+        values.put(PersonEntry.COLUMN_NAME_FIRST_NAME, person.getFirstName());
+        values.put(PersonEntry.COLUMN_NAME_LAST_NAME, person.getLastName());
+        values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
+        values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
+        values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
+        values.put(PersonEntry.COLUMN_NAME_CONTACT_ID, person.getId());
+        values.put(PersonEntry.COLUMN_NAME_PICTURE_ID, person.getPicture());
+        values.put(PersonEntry.COLUMN_NAME_FACEBOOK, person.getFacebook());
+        values.put(PersonEntry.COLUMN_NAME_TWITTER, person.getTwitter());
     }
 
     private static class PersonEntry {
@@ -311,11 +294,12 @@ final class PersonContract {
         static final String COLUMN_NAME_CONTACT_ID = "contactId";
         static final String COLUMN_NAME_PICTURE_ID = "pictureId";
         static final String COLUMN_NAME_FACEBOOK = "facebook";
+        static final String COLUMN_NAME_TWITTER = "twitter";
     }
 
     private static class DbHelper extends SQLiteOpenHelper {
         // If schema is changed, updatePersonList this DB version!
-        static final int DATABASE_VERSION = 2;
+        static final int DATABASE_VERSION = 4;
         static final String DATABASE_NAME = "Local.db";
 
         DbHelper(Context context) {

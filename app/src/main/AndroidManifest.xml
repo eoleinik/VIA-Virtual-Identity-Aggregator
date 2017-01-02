@@ -18,6 +18,10 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="4aa45e3061296c1b265a0c670cf0134c615e3a87" />
+
         <!-- android:theme="@style/AppTheme" -->
 
         <activity android:name=".MainActivity">

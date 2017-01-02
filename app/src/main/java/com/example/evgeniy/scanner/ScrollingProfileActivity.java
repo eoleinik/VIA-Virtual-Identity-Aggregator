@@ -11,9 +11,20 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.models.User;
+
+import retrofit2.Call;
 
 public class ScrollingProfileActivity extends AppCompatActivity {
     private Person person;
@@ -64,6 +75,22 @@ public class ScrollingProfileActivity extends AppCompatActivity {
             addressBlock.setVisibility(View.GONE);
         }
 
+        // Facebook button
+        String facebook = person.getFacebook();
+        if (facebook == null || facebook.isEmpty() || facebook.equals("null")) {
+            findViewById(R.id.facebookProfile).setVisibility(View.GONE);
+        }
+
+        // Twitter button
+        String twitter = person.getTwitter();
+        if (twitter == null || twitter.isEmpty() || twitter.equals("null")) {
+            findViewById(R.id.twitterFollow).setVisibility(View.GONE);
+        } else {
+            final String twitterTag = "@" + twitter;
+            ((Button) findViewById(R.id.twitterFollow)).setText(
+                    String.format(getString(R.string.follow), twitterTag));
+        }
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +120,38 @@ public class ScrollingProfileActivity extends AppCompatActivity {
             customTabsIntent.launchUrl(this, Uri.parse("https://www.facebook.com/app_scoped_user_id/" + fbId));
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void onTwitterClick(View view) {
+        TwitterSession session = Twitter.getInstance().core.getSessionManager().getActiveSession();
+        if (session != null) {
+            final String twitterTag = "@" + person.getTwitter();
+            TwitterFollow apiClient = new TwitterFollow(session);
+            Call<User> call = apiClient.getFollowService().create(person.getTwitter(), null, true);
+            call.enqueue(new Callback<User>() {
+                @Override
+                public void success(Result<User> result) {
+                    Toast.makeText(getApplicationContext(), "Following " + twitterTag, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void failure(TwitterException e) {
+                    Toast.makeText(getApplicationContext(), "Error following " + twitterTag, Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Twitter.getInstance().core.logIn(this, new Callback<TwitterSession>() {
+                @Override
+                public void success(Result<TwitterSession> result) {
+                }
+
+                @Override
+                public void failure(TwitterException exception) {
+                    Toast.makeText(getApplicationContext(),
+                            "Must login to twitter to follow.", Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 

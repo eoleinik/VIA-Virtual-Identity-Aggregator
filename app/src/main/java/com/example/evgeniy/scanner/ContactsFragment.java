@@ -43,7 +43,7 @@ public class ContactsFragment extends Fragment{
 
         updatePersonList(getActivity());
 
-        swipeView = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        swipeView = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -56,7 +56,7 @@ public class ContactsFragment extends Fragment{
 
         // On create refresh:
         if (MainActivity.isConnected) {
-            if (!swipeView.isRefreshing()) {
+            if (!swipeView.isRefreshing() && PersonContract.getMyId(getContext()) != -1) {
                 swipeView.setRefreshing(true);
                 DBHandler.startUpdateContacts(getContext());
             }

@@ -41,7 +41,8 @@ class DBHandler {
             String timestamp = jsonObject.getString("timestamp");
             String picture = jsonObject.getString("picture");
             String facebook = jsonObject.getString("facebook");
-            return new Person(id, timestamp, firstName, lastName, phone, email, address, picture, facebook);
+            String twitter = jsonObject.getString("twitter");
+            return new Person(id, timestamp, firstName, lastName, phone, email, address, picture, facebook, twitter);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -119,7 +120,7 @@ class DBHandler {
                     @Override
                     public void onResponse(String response) {
                         Log.d("MyApp", response);
-                        getNewContact(context, theirId, true);
+                        getNewContact(context, theirId);
                     }
                 },
                 new Response.ErrorListener() {
@@ -173,13 +174,10 @@ class DBHandler {
 
     /**
      * Gets contact from remote and add to local DB.
-     *
-     * @param context                Main activity context
+     *  @param context                Main activity context
      * @param id                     ID of contact to be added
-     * @param returnToContactDetails Is this contact being added as a result of QRCode scan?
-     *                               If so, contact details will be brought up afterwards, otherwise not.
      */
-    private static void getNewContact(final Context context, final int id, final boolean returnToContactDetails) {
+    private static void getNewContact(final Context context, final int id) {
         RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
         String url = String.format("http://api.a16_sd206.studev.groept.be/getPersonById/%s", id);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -219,7 +217,7 @@ class DBHandler {
      * Gets contact from remote and update local DB.
      *
      * @param context Application context
-     * @param id      ID of contact to be addedrwise not.
+     * @param id      ID of contact to be added
      */
     private static void updateContact(final Context context, final int id) {
         RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
@@ -239,7 +237,7 @@ class DBHandler {
                                 if (res > 0) {
                                     new PhotoManager(context).downloadAndSaveLocally(person);
                                 } else {
-                                    Toast.makeText(context, "Contact already added!", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, "Unable to update contact!", Toast.LENGTH_LONG).show();
                                 }
                             }
                         } catch (JSONException e) {
@@ -263,14 +261,14 @@ class DBHandler {
 
         ContactsFragment frg = (ContactsFragment) ((MainActivity) context).getViewAdapter().getItem(1);
         frg.updatePersonList(context);
-        SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) ((MainActivity) context).findViewById(R.id.swipe_container);
+        SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) ((MainActivity) context).findViewById(R.id.swipeContainer);
 
         if (swipeLayout.isRefreshing()) {
             updateRequests--;
             if (updateRequests == 0)
                 ((SwipeRefreshLayout)
                         ((MainActivity) context).findViewById(
-                                R.id.swipe_container)).setRefreshing(false);
+                                R.id.swipeContainer)).setRefreshing(false);
             return;
         }
 
@@ -324,14 +322,14 @@ class DBHandler {
             // If contactId from remote is not in local, get contact (will also add to local)
             if (!contactIds.contains(contactId)) {
                 updateRequests++;
-                getNewContact(context, contactId, false);
+                getNewContact(context, contactId);
             }
         }
 
         if (updateRequests == 0)
             ((SwipeRefreshLayout)
                     ((MainActivity) context).findViewById(
-                            R.id.swipe_container)).setRefreshing(false);
+                            R.id.swipeContainer)).setRefreshing(false);
 
     }
 
@@ -383,7 +381,7 @@ class DBHandler {
                 person.getFirstName(), person.getLastName(),
                 person.getEmail(), person.getPhone(),
                 person.getAddress(), person.getPicture(),
-                /*twitter*/"", person.getFacebook(), /*twitter*/ "");
+                person.getTwitter(), person.getFacebook(), /*linkedin*/ "");
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -446,7 +444,7 @@ class DBHandler {
         String url = String.format(Locale.UK, "http://api.a16_sd206.studev.groept.be/updatePerson/%s/%s/%s/%s/%s/%s/%s/%s/%s/%d",
                 newPerson.getFirstName(), newPerson.getLastName(), newPerson.getEmail(), newPerson.getPhone(),
                 newPerson.getAddress(), newPerson.getPicture(),
-                /*TODO:twitter*/null, newPerson.getFacebook(), /*TODO:linkedin*/null, oldPerson.getId());
+                newPerson.getTwitter(), newPerson.getFacebook(), /*TODO:linkedin*/null, oldPerson.getId());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override

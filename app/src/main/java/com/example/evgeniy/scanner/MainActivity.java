@@ -25,13 +25,16 @@ import android.widget.TextView;
 import com.facebook.FacebookSdk;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+import io.fabric.sdk.android.Fabric;
 
+public class MainActivity extends AppCompatActivity {
     private static final int UPDATE_PROFILE = 2;
     public static boolean isConnected = false;
     private final int[] tabIcons = {
@@ -124,6 +127,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(
+                getString(R.string.twitter_key), getString(R.string.twitter_secret));
+        Fabric.with(this, new Twitter(authConfig));
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 

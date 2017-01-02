@@ -2,6 +2,9 @@
     <string name="facebook_app_id">646386215539811</string>
     <string name="fb_login_protocol_scheme">fb646386215539811</string>
 
+    <string name="twitter_key">ak4pSnvpXx1nyr8ErTgBJIt6g</string>
+    <string name="twitter_secret">2GFhPw8VVazOjTaTRL8xdF73BrR5lf3VVFnFGNzwKSuMb3kqNA</string>
+
     <string name="app_name">V I A</string>
     <string name="scan">Scan</string>
     <string name="save">Save</string>
@@ -21,6 +24,7 @@
     <string name="choose_photo">Choose photo from gallery</string>
     <string name="internet_test">api.a16_sd206.studev.groept.be</string>
     <string name="facebook_profile">Facebook profile</string>
+    <string name="follow">Follow %s</string>
 
     <!-- Content descriptions -->
     <string name="phone_icon">Phone icon</string>

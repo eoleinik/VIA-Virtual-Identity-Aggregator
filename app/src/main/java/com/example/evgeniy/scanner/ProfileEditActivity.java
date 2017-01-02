@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,7 +20,12 @@ import com.android.volley.toolbox.ImageRequest;
 import com.facebook.CallbackManager;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
-import com.facebook.login.widget.LoginButton;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,7 +47,9 @@ public class ProfileEditActivity extends AppCompatActivity {
 
     private ProgressBar uploadSpinner;
     private ImageView imagePreview;
-    private LoginButton loginButton;
+
+    private TwitterLoginButton twitterLoginButton;
+
 
     private ProfileTracker profileTracker = new ProfileTracker() {
         @Override
@@ -128,7 +136,31 @@ public class ProfileEditActivity extends AppCompatActivity {
         editTextPhone = (EditText) findViewById(R.id.editTextPhone);
         uploadSpinner = (ProgressBar) findViewById(R.id.uploadSpinner);
         imagePreview = (ImageView) findViewById(R.id.imagePreview);
-        loginButton = (LoginButton) findViewById(R.id.loginButton);
+        //loginButton = (LoginButton) findViewById(R.id.loginButton);
+        twitterLoginButton = (TwitterLoginButton) findViewById(R.id.twitterLoginButton);
+
+        TwitterSession session = Twitter.getInstance().core.getSessionManager().getActiveSession();
+        if (session != null) {
+            String user = "@" + session.getUserName();
+            twitterLoginButton.setText(user);
+        }
+
+        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                // The TwitterSession is also available through:
+                // Twitter.getInstance().core.getSessionManager().getActiveSession()
+                TwitterSession session = result.data;
+                String user = "@" + session.getUserName();
+                twitterLoginButton.setText(user);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Log.d("TwitterKit", "Login with Twitter failure", exception);
+            }
+        });
+
 
         Person person = PersonContract.getProfile(this);
 
@@ -170,6 +202,9 @@ public class ProfileEditActivity extends AppCompatActivity {
         // Facebook activity result sent to callback manager
         callbackManager.onActivityResult(requestCode, resultCode, data);
 
+        // Twitter activity result
+        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == SELECT_IMAGE_FROM_GALLERY) {     // if we were choosing photo
             if (resultCode == RESULT_OK) {
                 Uri selectedImageUri = data.getData();
@@ -206,11 +241,21 @@ public class ProfileEditActivity extends AppCompatActivity {
 
     public void onSaveClick(View view) {
         View focusView = null;
+        /* reset errors */
+        editTextEmail.setError(null);
+        editTextPhone.setError(null);
+        editTextLastName.setError(null);
+        editTextFirstName.setError(null);
 
         String email = editTextEmail.getText().toString();
         if (!isEmailValid(email)) {
             editTextEmail.setError("Email invalid");
             focusView = editTextEmail;
+        }
+
+        if (editTextPhone.getText().length() == 0) {
+            editTextPhone.setError("Phone required");
+            focusView = editTextPhone;
         }
 
         if (editTextLastName.getText().length() == 0) {
@@ -238,6 +283,11 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Called once photo has been uploaded to cloudinary.
+     *
+     * @param imageId Id of uploaded image
+     */
     public void onFinalSave(String imageId) {
         if (imageId == null) {
             Person person = PersonContract.getProfile(this);
@@ -252,13 +302,18 @@ public class ProfileEditActivity extends AppCompatActivity {
         String email = editTextEmail.getText().toString();
         String phone = editTextPhone.getText().toString();
         String facebook = "";
+        String twitter = "";
 
         Profile fbProfile = Profile.getCurrentProfile();
 
         if (fbProfile != null)
             facebook = fbProfile.getId();
 
-        Person person = new Person(null, firstName, lastName, phone, email, "", imageId, facebook);
+        TwitterSession session = Twitter.getInstance().core.getSessionManager().getActiveSession();
+        if (session != null)
+            twitter = session.getUserName();
+
+        Person person = new Person(null, firstName, lastName, phone, email, "", imageId, facebook, twitter);
         DBHandler.saveProfile(person, this);
         // at this point `person` should have an ID, as well as populated fields
     }

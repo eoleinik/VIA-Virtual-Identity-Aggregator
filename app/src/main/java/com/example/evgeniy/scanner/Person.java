@@ -29,10 +29,12 @@ class Person implements Parcelable {
     private final String address;
     private final String picture;
     private final String facebook;
+    private final String twitter;
     private Bitmap bitmap = null;
     private int id = -1;
 
-    Person(String timestamp, String firstName, String lastName, String phone, String email, String address, String picture, String facebook) {
+    Person(String timestamp, String firstName, String lastName, String phone, String email,
+           String address, String picture, String facebook, String twitter) {
         this.timestamp = timestamp;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -41,9 +43,11 @@ class Person implements Parcelable {
         this.address = address;
         this.picture = picture;
         this.facebook = facebook;
+        this.twitter = twitter;
     }
 
-    Person(int id, String timestamp, String firstName, String lastName, String phone, String email, String address, String picture, String facebook) {
+    Person(int id, String timestamp, String firstName, String lastName, String phone, String email,
+           String address, String picture, String facebook, String twitter) {
         this.id = id;
         this.timestamp = timestamp;
         this.firstName = firstName;
@@ -53,6 +57,7 @@ class Person implements Parcelable {
         this.address = address;
         this.picture = picture;
         this.facebook = facebook;
+        this.twitter = twitter;
     }
 
     private Person(Parcel in) {
@@ -65,6 +70,7 @@ class Person implements Parcelable {
         this.address = in.readString();
         this.picture = in.readString();
         this.facebook = in.readString();
+        this.twitter = in.readString();
     }
 
     int getId() {
@@ -101,6 +107,10 @@ class Person implements Parcelable {
 
     String getFacebook() {
         return facebook;
+    }
+
+    String getTwitter() {
+        return twitter;
     }
 
     // Parcel stuff
@@ -150,5 +160,6 @@ class Person implements Parcelable {
         dest.writeString(this.address);
         dest.writeString(this.picture);
         dest.writeString(this.facebook);
+        dest.writeString(this.twitter);
     }
 }
