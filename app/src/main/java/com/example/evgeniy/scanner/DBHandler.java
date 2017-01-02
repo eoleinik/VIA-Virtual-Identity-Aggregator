@@ -3,6 +3,7 @@ package com.example.evgeniy.scanner;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
@@ -25,6 +26,8 @@ import java.util.Date;
 import java.util.Locale;
 
 class DBHandler {
+    private static int updateRequests;
+
     @Nullable
     private static Person jsonToPerson(String json) {
         try {
@@ -191,7 +194,7 @@ class DBHandler {
                                 Person person = jsonToPerson(response);
                                 int res = PersonContract.addContact(context, person);
                                 if (res > 0) {
-                                    new PhotoManager(context).downloadAndSaveLocally(person, returnToContactDetails);
+                                    new PhotoManager(context).downloadAndSaveLocally(person);
                                 } else {
                                     Toast.makeText(context, "Contact already added!", Toast.LENGTH_LONG).show();
                                 }
@@ -233,7 +236,7 @@ class DBHandler {
                                 Person person = jsonToPerson(response);
                                 int res = PersonContract.updateContact(context, person);
                                 if (res > 0) {
-                                    new PhotoManager(context).downloadAndSaveLocally(person, false);
+                                    new PhotoManager(context).downloadAndSaveLocally(person);
                                 } else {
                                     Toast.makeText(context, "Contact already added!", Toast.LENGTH_LONG).show();
                                 }
@@ -253,14 +256,22 @@ class DBHandler {
         queue.add(stringRequest);
     }
 
-    static void contactPhotoDownloaded(Context context, Person person, final boolean returnToContactDetails) {
-        if (context instanceof MainActivity) {
-            ContactsFragment frg = (ContactsFragment) ((MainActivity) context).getViewAdapter().getItem(1);
-            frg.updatePersonList(context);
-        }
-
-        if (!returnToContactDetails)
+    static void contactPhotoDownloaded(Context context, Person person) {
+        if (!(context instanceof MainActivity))
             return;
+
+        ContactsFragment frg = (ContactsFragment) ((MainActivity) context).getViewAdapter().getItem(1);
+        frg.updatePersonList(context);
+        SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) ((MainActivity) context).findViewById(R.id.swipe_container);
+
+        if (swipeLayout.isRefreshing()) {
+            updateRequests--;
+            if (updateRequests == 0)
+                ((SwipeRefreshLayout)
+                        ((MainActivity) context).findViewById(
+                                R.id.swipe_container)).setRefreshing(false);
+            return;
+        }
 
         Intent detailIntent = new Intent(context, ScrollingProfileActivity.class);
         detailIntent.putExtra("person", person);
@@ -286,6 +297,8 @@ class DBHandler {
         ArrayList<Person> contactList = (ArrayList<Person>) PersonContract.getContacts(context);
         ArrayList<Integer> contactIds = new ArrayList<>();
 
+        updateRequests = 0;
+
         for (Person contact : contactList)
             contactIds.add(contact.getId());
 
@@ -295,8 +308,10 @@ class DBHandler {
                 Date newTime = formatter.parse(contactTimestamps.get(contact.getId()));
                 Date oldTime = formatter.parse(contact.getTimestamp());
 
-                if (newTime.compareTo(oldTime) > 0)
+                if (newTime.compareTo(oldTime) > 0) {
+                    updateRequests++;
                     updateContact(context, contact.getId());
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -306,9 +321,17 @@ class DBHandler {
             int contactId = contactTimestamps.keyAt(i);
 
             // If contactId from remote is not in local, get contact (will also add to local)
-            if (!contactIds.contains(contactId))
+            if (!contactIds.contains(contactId)) {
+                updateRequests++;
                 getNewContact(context, contactId, false);
+            }
         }
+
+        if (updateRequests == 0)
+            ((SwipeRefreshLayout)
+                    ((MainActivity) context).findViewById(
+                            R.id.swipe_container)).setRefreshing(false);
+
     }
 
     private static void getContactTimestamps(final Context context, int id) {

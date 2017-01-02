@@ -45,11 +45,11 @@ class PhotoManager {
         }
     }
 
-    void downloadAndSaveLocally(final Person person, final boolean returnToContactDetails) {
+    void downloadAndSaveLocally(final Person person) {
         RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
 
         if (person.getPicture().isEmpty()) {
-            DBHandler.contactPhotoDownloaded(context, person, returnToContactDetails);
+            DBHandler.contactPhotoDownloaded(context, person);
             return;
         }
 
@@ -63,7 +63,7 @@ class PhotoManager {
                             File file = new File(sd, person.getPicture());
                             out = new FileOutputStream(file);
                             response.compress(Bitmap.CompressFormat.PNG, 100, out);
-                            DBHandler.contactPhotoDownloaded(context, person, returnToContactDetails);
+                            DBHandler.contactPhotoDownloaded(context, person);
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {

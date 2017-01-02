@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 public class ContactsFragment extends Fragment{
 
     private ContactAdapter contactAdapter;
+    private SwipeRefreshLayout swipeView;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -41,6 +43,13 @@ public class ContactsFragment extends Fragment{
 
         updatePersonList(getActivity());
 
+        swipeView = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                DBHandler.startUpdateContacts(getContext());
+            }
+        });
         contactAdapter = new ContactAdapter(context, new ArrayList<Person>());
         contactsView.setAdapter(contactAdapter);
 

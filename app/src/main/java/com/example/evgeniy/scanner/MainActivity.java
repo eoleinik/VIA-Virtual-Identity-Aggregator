@@ -85,10 +85,6 @@ public class MainActivity extends AppCompatActivity {
         integrator.initiateScan();
     }
 
-    public void onUpdate(View view) {
-        DBHandler.startUpdateContacts(this);
-    }
-
     //region  Profile fragment
 
 
