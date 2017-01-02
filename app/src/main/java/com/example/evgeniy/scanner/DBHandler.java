@@ -40,7 +40,8 @@ class DBHandler {
             String address = jsonObject.getString("address");
             String timestamp = jsonObject.getString("timestamp");
             String picture = jsonObject.getString("picture");
-            return new Person(id, timestamp, firstName, lastName, phone, email, address, picture);
+            String facebook = jsonObject.getString("facebook");
+            return new Person(id, timestamp, firstName, lastName, phone, email, address, picture, facebook);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -378,8 +379,11 @@ class DBHandler {
     private static void createNewPerson(final Person person, final Context context) {
         // if no local ID
         RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
-        String url = String.format("http://api.a16_sd206.studev.groept.be/createPerson/%s/%s/%s/%s/%s/%s",
-                person.getFirstName(), person.getLastName(), person.getEmail(), person.getPhone(), person.getAddress(), person.getPicture());
+        String url = String.format("http://api.a16_sd206.studev.groept.be/createPerson/%s/%s/%s/%s/%s/%s/%s/%s/%s",
+                person.getFirstName(), person.getLastName(),
+                person.getEmail(), person.getPhone(),
+                person.getAddress(), person.getPicture(),
+                /*twitter*/"", person.getFacebook(), /*twitter*/ "");
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -438,8 +442,11 @@ class DBHandler {
     private static void updateExistingPerson(final Person oldPerson, final Person newPerson, final Context context) {
         // if no local ID
         RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
-        String url = String.format(Locale.UK, "http://api.a16_sd206.studev.groept.be/updatePerson/%s/%s/%s/%s/%s/%s/%d",
-                newPerson.getFirstName(), newPerson.getLastName(), newPerson.getEmail(), newPerson.getPhone(), newPerson.getAddress(), newPerson.getPicture(), oldPerson.getId());
+
+        String url = String.format(Locale.UK, "http://api.a16_sd206.studev.groept.be/updatePerson/%s/%s/%s/%s/%s/%s/%s/%s/%s/%d",
+                newPerson.getFirstName(), newPerson.getLastName(), newPerson.getEmail(), newPerson.getPhone(),
+                newPerson.getAddress(), newPerson.getPicture(),
+                /*TODO:twitter*/null, newPerson.getFacebook(), /*TODO:linkedin*/null, oldPerson.getId());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -455,8 +462,8 @@ class DBHandler {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("MyApp", error.getMessage());
-                        //MyProfileFragment.saveFailedUI(context);
+                        Log.d("MyApp", Integer.toString(error.networkResponse.statusCode));
+                        //MyProfileFragment.saveFailedUI(context);1
                         Toast.makeText(context, "Can't updatePersonList profile", Toast.LENGTH_SHORT).show();
                     }
                 });

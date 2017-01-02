@@ -47,9 +47,21 @@ public class ContactsFragment extends Fragment{
         swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                DBHandler.startUpdateContacts(getContext());
+                if (MainActivity.isConnected)
+                    DBHandler.startUpdateContacts(getContext());
+                else
+                    swipeView.setRefreshing(false);
             }
         });
+
+        // On create refresh:
+        if (MainActivity.isConnected) {
+            if (!swipeView.isRefreshing()) {
+                swipeView.setRefreshing(true);
+                DBHandler.startUpdateContacts(getContext());
+            }
+        }
+
         contactAdapter = new ContactAdapter(context, new ArrayList<Person>());
         contactsView.setAdapter(contactAdapter);
 
@@ -69,7 +81,6 @@ public class ContactsFragment extends Fragment{
     @Override
     public void onResume() {
         updatePersonList(this.getActivity());
-        contactAdapter.notifyDataSetChanged();
         super.onResume();
     }
 }

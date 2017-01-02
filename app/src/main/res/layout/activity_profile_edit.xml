@@ -15,14 +15,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/buttonSave"
-        android:layout_margin="16dp">
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp">
 
         <LinearLayout
             android:id="@+id/linerLayoutEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:layout_marginTop="24dp"
             android:orientation="vertical">
 
             <ProgressBar
@@ -47,37 +47,72 @@
                 android:onClick="openGallery"
                 android:text="@string/choose_photo" />
 
-            <EditText
-                android:id="@+id/editTextFirstName"
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/loginButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/first_name"
-                android:inputType="textPersonName" />
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
 
-            <EditText
-                android:id="@+id/editTextLastName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/last_name"
-                android:inputType="textPersonName" />
+                android:layout_marginBottom="12dp"
+                android:layout_marginTop="12dp" />
 
-            <EditText
-                android:id="@+id/editTextEmail"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/email"
-                android:inputType="textEmailAddress" />
+                android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/editTextPhone"
+                <EditText
+                    android:id="@+id/editTextFirstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/first_name"
+                    android:inputType="textPersonName" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/phone"
-                android:inputType="phone" />
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/editTextLastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/last_name"
+                    android:inputType="textPersonName" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/editTextEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/email"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/editTextPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/phone"
+                    android:inputType="phone"
+                    android:maxLines="1" />
+
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
     </ScrollView>

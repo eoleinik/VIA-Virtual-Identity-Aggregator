@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.facebook.FacebookSdk;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 
         new CheckInternetTask().execute();

@@ -28,21 +28,21 @@
                     android:id="@+id/my_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/my_picture"
+                    android:layout_alignEnd="@id/my_picture"
                     android:layout_alignLeft="@id/my_picture"
+                    android:layout_alignRight="@id/my_picture"
                     android:layout_alignStart="@id/my_picture"
                     android:layout_alignTop="@id/my_picture"
-                    android:layout_alignRight="@id/my_picture"
-                    android:layout_alignEnd="@id/my_picture"
-                    android:layout_alignBottom="@id/my_picture"
                     android:layout_margin="20dp"
                     android:gravity="bottom"
-                    android:textSize="30sp"
-                    android:text=""
-                    android:textColor="@color/light_font"
                     android:shadowColor="@color/text_shadow"
                     android:shadowDx="2"
                     android:shadowDy="2"
                     android:shadowRadius="7"
+                    android:text=""
+                    android:textColor="@color/light_font"
+                    android:textSize="30sp"
                     />
 
                 <include
@@ -51,7 +51,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/my_picture" />
-
             </RelativeLayout>
 
     </ScrollView>

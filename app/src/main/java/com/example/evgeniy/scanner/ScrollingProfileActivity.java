@@ -1,6 +1,10 @@
 package com.example.evgeniy.scanner;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -76,5 +80,40 @@ public class ScrollingProfileActivity extends AppCompatActivity {
     public void onRemoveClick(View view) {
         DBHandler.removeContact(this, person.getId());
         // After contact removed (async), will go back to main activity
+    }
+
+    public void onFacebookClick(View view) {
+        String fbId = person.getFacebook();
+        if (fbId == null || fbId.equals("null") || fbId.isEmpty())
+            return;
+
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        try {
+            customTabsIntent.launchUrl(this, Uri.parse("https://www.facebook.com/app_scoped_user_id/" + fbId));
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onSmsClick(View view) {
+        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+        sendIntent.setData(Uri.parse("sms:" + person.getPhone()));
+        startActivity(sendIntent);
+    }
+
+    public void onEmailClick(View view) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setType("*/*");
+        intent.setData(Uri.parse("mailto:" + person.getEmail()));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+    public void onCallClick(View view) {
+        Intent sendIntent = new Intent(Intent.ACTION_DIAL);
+        sendIntent.setData(Uri.parse("tel:" + person.getPhone()));
+        startActivity(sendIntent);
     }
 }

@@ -28,10 +28,11 @@ class Person implements Parcelable {
     private final String email;
     private final String address;
     private final String picture;
+    private final String facebook;
     private Bitmap bitmap = null;
     private int id = -1;
 
-    Person(String timestamp, String firstName, String lastName, String phone, String email, String address, String picture) {
+    Person(String timestamp, String firstName, String lastName, String phone, String email, String address, String picture, String facebook) {
         this.timestamp = timestamp;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -39,19 +40,10 @@ class Person implements Parcelable {
         this.email = email;
         this.address = address;
         this.picture = picture;
+        this.facebook = facebook;
     }
 
-    Person(String firstName, String lastName, String phone, String email, String address, String picture) {
-        this.timestamp = null;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-        this.picture = picture;
-    }
-
-    Person(int id, String timestamp, String firstName, String lastName, String phone, String email, String address, String picture) {
+    Person(int id, String timestamp, String firstName, String lastName, String phone, String email, String address, String picture, String facebook) {
         this.id = id;
         this.timestamp = timestamp;
         this.firstName = firstName;
@@ -60,6 +52,7 @@ class Person implements Parcelable {
         this.email = email;
         this.address = address;
         this.picture = picture;
+        this.facebook = facebook;
     }
 
     private Person(Parcel in) {
@@ -71,6 +64,7 @@ class Person implements Parcelable {
         this.email = in.readString();
         this.address = in.readString();
         this.picture = in.readString();
+        this.facebook = in.readString();
     }
 
     int getId() {
@@ -103,6 +97,10 @@ class Person implements Parcelable {
 
     String getAddress() {
         return address;
+    }
+
+    String getFacebook() {
+        return facebook;
     }
 
     // Parcel stuff
@@ -151,5 +149,6 @@ class Person implements Parcelable {
         dest.writeString(this.email);
         dest.writeString(this.address);
         dest.writeString(this.picture);
+        dest.writeString(this.facebook);
     }
 }

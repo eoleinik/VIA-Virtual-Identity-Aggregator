@@ -22,7 +22,7 @@ final class PersonContract {
                     PersonEntry.COLUMN_NAME_EMAIL + " TEXT," +
                     PersonEntry.COLUMN_NAME_PHONE + " TEXT," +
                     PersonEntry.COLUMN_NAME_PICTURE_ID + " TEXT," +
-                    PersonEntry.COLUMN_NAME_IMAGE_FILENAME + " BLOB)";
+                    PersonEntry.COLUMN_NAME_FACEBOOK + " TEXT)";
     private static final String SQL_DELETE_PEOPLE =
             "DROP TABLE IF EXISTS " + PersonEntry.PEOPLE_TABLE_NAME;
     // Cache profile id since it is requested often
@@ -75,6 +75,7 @@ final class PersonContract {
         values.put(PersonEntry.COLUMN_NAME_CONTACT_ID, person.getId());
         values.put(PersonEntry.COLUMN_NAME_IS_ME, 0);
         values.put(PersonEntry.COLUMN_NAME_PICTURE_ID, person.getPicture());
+        values.put(PersonEntry.COLUMN_NAME_FACEBOOK, person.getFacebook());
 
         return (int) db.insert(PersonEntry.PEOPLE_TABLE_NAME, null, values);
     }
@@ -91,7 +92,8 @@ final class PersonContract {
                 PersonEntry.COLUMN_NAME_EMAIL,
                 PersonEntry.COLUMN_NAME_ADDRESS,
                 PersonEntry.COLUMN_NAME_CONTACT_ID,
-                PersonEntry.COLUMN_NAME_PICTURE_ID
+                PersonEntry.COLUMN_NAME_PICTURE_ID,
+                PersonEntry.COLUMN_NAME_FACEBOOK
         };
 
         String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
@@ -164,6 +166,7 @@ final class PersonContract {
         values.put(PersonEntry.COLUMN_NAME_PHONE, person.getPhone());
         values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
         values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
+        values.put(PersonEntry.COLUMN_NAME_FACEBOOK, person.getFacebook());
 
         String selection = PersonEntry.COLUMN_NAME_CONTACT_ID + " = ?";
         String[] selectionArgs = {Integer.toString(person.getId())};
@@ -208,6 +211,7 @@ final class PersonContract {
         values.put(PersonEntry.COLUMN_NAME_EMAIL, person.getEmail());
         values.put(PersonEntry.COLUMN_NAME_ADDRESS, person.getAddress());
         values.put(PersonEntry.COLUMN_NAME_PICTURE_ID, person.getPicture());
+        values.put(PersonEntry.COLUMN_NAME_FACEBOOK, person.getFacebook());
 
         String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
         String[] selectionArgs = {"1"};
@@ -244,7 +248,8 @@ final class PersonContract {
                 PersonEntry.COLUMN_NAME_EMAIL,
                 PersonEntry.COLUMN_NAME_ADDRESS,
                 PersonEntry.COLUMN_NAME_CONTACT_ID,
-                PersonEntry.COLUMN_NAME_PICTURE_ID
+                PersonEntry.COLUMN_NAME_PICTURE_ID,
+                PersonEntry.COLUMN_NAME_FACEBOOK
         };
 
         String selection = PersonEntry.COLUMN_NAME_IS_ME + " = ?";
@@ -289,8 +294,9 @@ final class PersonContract {
         String email = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_EMAIL));
         String address = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_ADDRESS));
         String pictureId = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_PICTURE_ID));
+        String facebook = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_FACEBOOK));
 
-        return new Person(id, timestamp, firstName, lastName, phone, email, address, pictureId);
+        return new Person(id, timestamp, firstName, lastName, phone, email, address, pictureId, facebook);
     }
 
     private static class PersonEntry {
@@ -302,14 +308,14 @@ final class PersonContract {
         static final String COLUMN_NAME_PHONE = "phone";
         static final String COLUMN_NAME_EMAIL = "email";
         static final String COLUMN_NAME_ADDRESS = "address";
-        static final String COLUMN_NAME_IMAGE_FILENAME = "imageFilename";
         static final String COLUMN_NAME_CONTACT_ID = "contactId";
         static final String COLUMN_NAME_PICTURE_ID = "pictureId";
+        static final String COLUMN_NAME_FACEBOOK = "facebook";
     }
 
     private static class DbHelper extends SQLiteOpenHelper {
         // If schema is changed, updatePersonList this DB version!
-        static final int DATABASE_VERSION = 5;
+        static final int DATABASE_VERSION = 2;
         static final String DATABASE_NAME = "Local.db";
 
         DbHelper(Context context) {
