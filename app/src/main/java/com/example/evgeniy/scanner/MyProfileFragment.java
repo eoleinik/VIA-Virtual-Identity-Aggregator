@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -30,8 +31,29 @@ public class MyProfileFragment extends Fragment{
 
         ((TextView) view.findViewById(R.id.email_address)).setText(person.getEmail());
         ((TextView) view.findViewById(R.id.phone_number)).setText(person.getPhone());
-        ((TextView) view.findViewById(R.id.address)).setText(person.getAddress());
         ((TextView) view.findViewById(R.id.my_name)).setText(person.getFullName());
+
+        // facebook account
+        String facebook = person.getFacebook();
+        LinearLayout facebookBlock = (LinearLayout)view.findViewById(R.id.facebook_block);
+        if (facebook == null || facebook.isEmpty() || facebook.equals("null")) {
+            facebookBlock.setVisibility(View.GONE);
+        } else {
+            TextView facebook_id = (TextView) view.findViewById(R.id.facebook_id);
+            facebook_id.setText(String.format(getString(R.string.on_facebook), person.getFirstName()));
+            facebookBlock.setVisibility(View.VISIBLE);
+        }
+
+        // twitter account
+        String twitter_handle = person.getTwitter();
+        LinearLayout twitterBlock = (LinearLayout)view.findViewById(R.id.twitter_block);
+        if (twitter_handle == null || twitter_handle.isEmpty() || twitter_handle.equals("null")) {
+            twitterBlock.setVisibility(View.GONE);
+        } else {
+            TextView twitter_id = (TextView) view.findViewById(R.id.twitter_id);
+            twitter_id.setText("@"+twitter_handle);
+            twitterBlock.setVisibility(View.VISIBLE);
+        }
 
         String imageId = person.getPicture();
         if (imageId != null) {

@@ -36,9 +36,7 @@
                     android:layout_alignTop="@id/my_picture"
                     style="@style/TitleTextStyle"
                     android:layout_margin="20dp"
-                    android:gravity="bottom"
-
-                    />
+                    android:gravity="bottom" />
 
                 <include
                     android:id="@+id/profileInfo"

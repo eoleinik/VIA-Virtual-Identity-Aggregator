@@ -106,54 +106,112 @@
 
         </RelativeLayout>
 
-        <include layout="@layout/item_divider" />
-
-
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/twitter_block"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:padding="@dimen/activity_horizontal_margin">
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/address_image"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:contentDescription="@string/address_icon"
-                android:src="@drawable/ic_business_black_48dp" />
+            <include layout="@layout/item_divider" />
 
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_toEndOf="@id/address_image"
-                android:layout_toRightOf="@id/address_image"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text=""
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="#212121" />
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="onMyTwitterClick"
+                android:padding="@dimen/activity_horizontal_margin">
 
-            <TextView
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/twitter_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:contentDescription="@string/address_icon"
+                    android:src="@drawable/twitter_box" />
+
+                <TextView
+                    android:id="@+id/twitter_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_toEndOf="@id/twitter_image"
+                    android:layout_toRightOf="@id/twitter_image"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#212121" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/twitter_id"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@id/twitter_image"
+                    android:layout_toRightOf="@id/twitter_image"
+                    android:text="@string/twitter_profile"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="#727272" />
+
+            </RelativeLayout>
+
+
+
                 android:layout_height="wrap_content"
-                android:layout_below="@id/address"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="8dp"
-                android:layout_toEndOf="@id/address_image"
-                android:layout_toRightOf="@id/address_image"
-                android:text="@string/address"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="#727272" />
 
-        </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="onMyFacebookClick"
+                android:padding="@dimen/activity_horizontal_margin">
+
+                <ImageView
+                    android:id="@+id/facebook_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:contentDescription="@string/address_icon"
+                    android:src="@drawable/facebook_box" />
+
+                <TextView
+                    android:id="@+id/facebook_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_toEndOf="@id/facebook_image"
+                    android:layout_toRightOf="@id/facebook_image"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#212121" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/facebook_id"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@id/facebook_image"
+                    android:layout_toRightOf="@id/facebook_image"
+                    android:text="@string/facebook_profile"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="#727272" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 

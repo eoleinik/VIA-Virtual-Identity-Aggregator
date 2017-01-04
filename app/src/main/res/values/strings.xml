@@ -26,7 +26,7 @@
     <string name="facebook_profile">Facebook profile</string>
     <string name="twitter_profile">Twitter profile</string>
     <string name="on_facebook">%s\'s profile</string>
-    <string name="follow">Follow %s</string>
+    <string name="on_twitter">%s on Twitter</string>
 
     <!-- Content descriptions -->
     <string name="phone_icon">Phone icon</string>

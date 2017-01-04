@@ -2,13 +2,16 @@ package com.example.evgeniy.scanner;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -121,6 +124,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void onMyTwitterClick(View view) {
+        String twitter_id = PersonContract.getProfile(this).getTwitter();
+        if (twitter_id == null || twitter_id.equals("null") || twitter_id.isEmpty())
+            return;
+
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        try {
+            customTabsIntent.launchUrl(this, Uri.parse("https://twitter.com//" + twitter_id));
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onMyFacebookClick(View view) {
+        String fbId = PersonContract.getProfile(this).getFacebook();
+        if (fbId == null || fbId.equals("null") || fbId.isEmpty())
+            return;
+
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        try {
+            customTabsIntent.launchUrl(this, Uri.parse("https://www.facebook.com/app_scoped_user_id/" + fbId));
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     //endregion
 

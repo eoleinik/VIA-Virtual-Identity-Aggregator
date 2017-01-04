@@ -66,8 +66,6 @@
 
             </RelativeLayout>
 
-            <include layout="@layout/item_divider" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -75,6 +73,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <include layout="@layout/item_divider" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -123,8 +123,6 @@
 
             </RelativeLayout>
 
-            <include layout="@layout/item_divider" />
-
         </LinearLayout>
 
 
@@ -133,6 +131,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <include layout="@layout/item_divider" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -180,8 +180,6 @@
 
             </RelativeLayout>
 
-            <include layout="@layout/item_divider" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -189,6 +187,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <include layout="@layout/item_divider" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -237,8 +237,6 @@
 
             </RelativeLayout>
 
-            <include layout="@layout/item_divider" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -246,6 +244,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <include layout="@layout/item_divider" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -293,8 +293,6 @@
                     android:textColor="#727272" />
 
             </RelativeLayout>
-
-            <include layout="@layout/item_divider" />
 
         </LinearLayout>
 
