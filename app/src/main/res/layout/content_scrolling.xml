@@ -26,6 +26,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
+                android:onClick="onCallClick"
                 android:padding="@dimen/activity_horizontal_margin">
 
                 <ImageView
@@ -79,6 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
+                android:onClick="onEmailClick"
                 android:clickable="true"
                 android:padding="@dimen/activity_horizontal_margin">
 
@@ -183,61 +185,119 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/facebook_block"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/activity_horizontal_margin">
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/facebookProfile"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
                 android:onClick="onFacebookClick"
-                android:text="@string/facebook_profile" />
+                android:padding="@dimen/activity_horizontal_margin">
 
-            <Button
-                android:id="@+id/twitterFollow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:onClick="onTwitterClick" />
+                <ImageView
+                    android:id="@+id/facebook_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:contentDescription="@string/address_icon"
+                    android:src="@drawable/facebook_box" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:onClick="onSmsClick"
-                android:text="@string/send_sms" />
+                <TextView
+                    android:id="@+id/facebook_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_toEndOf="@id/facebook_image"
+                    android:layout_toRightOf="@id/facebook_image"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#212121" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:onClick="onCallClick"
-                android:text="@string/call" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/facebook_id"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@id/facebook_image"
+                    android:layout_toRightOf="@id/facebook_image"
+                    android:text="@string/facebook_profile"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="#727272" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:onClick="onEmailClick"
-                android:text="@string/email" />
+            </RelativeLayout>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:onClick="onRemoveClick"
-                android:text="@string/remove_contact" />
+            <include layout="@layout/item_divider" />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/twitter_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="onTwitterClick"
+                android:padding="@dimen/activity_horizontal_margin">
+
+                <ImageView
+                    android:id="@+id/twitter_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:contentDescription="@string/address_icon"
+                    android:src="@drawable/twitter_box" />
+
+                <TextView
+                    android:id="@+id/twitter_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_toEndOf="@id/twitter_image"
+                    android:layout_toRightOf="@id/twitter_image"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="#212121" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/twitter_id"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@id/twitter_image"
+                    android:layout_toRightOf="@id/twitter_image"
+                    android:text="@string/twitter_profile"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="#727272" />
+
+            </RelativeLayout>
+
+            <include layout="@layout/item_divider" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

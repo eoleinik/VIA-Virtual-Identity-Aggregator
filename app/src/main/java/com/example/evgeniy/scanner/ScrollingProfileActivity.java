@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,11 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.widget.LoginButton;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.twitter.sdk.android.core.models.User;
 
 import retrofit2.Call;
@@ -77,36 +80,41 @@ public class ScrollingProfileActivity extends AppCompatActivity {
 
         // Facebook button
         String facebook = person.getFacebook();
+        LinearLayout facebookBlock = (LinearLayout)findViewById(R.id.facebook_block);
         if (facebook == null || facebook.isEmpty() || facebook.equals("null")) {
-            findViewById(R.id.facebookProfile).setVisibility(View.GONE);
+            facebookBlock.setVisibility(View.GONE);
+        } else {
+            TextView facebook_id = (TextView) findViewById(R.id.facebook_id);
+            facebook_id.setText(String.format(getString(R.string.on_facebook), person.getFirstName()));
+            facebookBlock.setVisibility(View.VISIBLE);
         }
 
         // Twitter button
+        LinearLayout twitterBlock = (LinearLayout) findViewById(R.id.twitter_block);
         String twitter = person.getTwitter();
         if (twitter == null || twitter.isEmpty() || twitter.equals("null")) {
-            findViewById(R.id.twitterFollow).setVisibility(View.GONE);
+            twitterBlock.setVisibility(View.GONE);
         } else {
-            final String twitterTag = "@" + twitter;
-            ((Button) findViewById(R.id.twitterFollow)).setText(
-                    String.format(getString(R.string.follow), twitterTag));
+            TextView twitter_id = (TextView) findViewById(R.id.twitter_id);
+            twitter_id.setText(String.format(getString(R.string.follow), "@"+twitter));
+            twitterBlock.setVisibility(View.VISIBLE);
         }
 
+        // deleting profile
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final ScrollingProfileActivity that = this;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Deleting profile...", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                DBHandler.removeContact(that, person.getId());
             }
         });
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null)
             supportActionBar.setDisplayHomeAsUpEnabled(true);
-    }
 
-    public void onRemoveClick(View view) {
-        DBHandler.removeContact(this, person.getId());
-        // After contact removed (async), will go back to main activity
     }
 
     public void onFacebookClick(View view) {
@@ -155,11 +163,11 @@ public class ScrollingProfileActivity extends AppCompatActivity {
         }
     }
 
-    public void onSmsClick(View view) {
-        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-        sendIntent.setData(Uri.parse("sms:" + person.getPhone()));
-        startActivity(sendIntent);
-    }
+//    public void onSmsClick(View view) {
+//        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+//        sendIntent.setData(Uri.parse("sms:" + person.getPhone()));
+//        startActivity(sendIntent);
+//    }
 
     public void onEmailClick(View view) {
         Intent intent = new Intent(Intent.ACTION_SENDTO);

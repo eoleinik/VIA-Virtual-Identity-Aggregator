@@ -34,15 +34,10 @@
                     android:layout_alignRight="@id/my_picture"
                     android:layout_alignStart="@id/my_picture"
                     android:layout_alignTop="@id/my_picture"
+                    style="@style/TitleTextStyle"
                     android:layout_margin="20dp"
                     android:gravity="bottom"
-                    android:shadowColor="@color/text_shadow"
-                    android:shadowDx="2"
-                    android:shadowDy="2"
-                    android:shadowRadius="7"
-                    android:text=""
-                    android:textColor="@color/light_font"
-                    android:textSize="30sp"
+
                     />
 
                 <include

@@ -24,6 +24,8 @@
     <string name="choose_photo">Choose photo from gallery</string>
     <string name="internet_test">api.a16_sd206.studev.groept.be</string>
     <string name="facebook_profile">Facebook profile</string>
+    <string name="twitter_profile">Twitter profile</string>
+    <string name="on_facebook">%s\'s profile</string>
     <string name="follow">Follow %s</string>
 
     <!-- Content descriptions -->

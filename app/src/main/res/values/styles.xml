@@ -16,5 +16,15 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="TitleTextStyle" parent="android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/light_font</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:shadowColor">@color/text_shadow</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">7</item>
+    </style>
+
 
 </resources>
