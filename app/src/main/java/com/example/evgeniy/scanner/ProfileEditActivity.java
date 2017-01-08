@@ -313,7 +313,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         if (session != null)
             twitter = session.getUserName();
 
-        Person person = new Person(null, firstName, lastName, phone, email, "", imageId, facebook, twitter);
+        Person person = new PersonBuilder().timestamp(null).firstName(firstName).lastName(lastName).phone(phone).email(email).address("").picture(imageId).facebook(facebook).twitter(twitter).buildPerson();
         DBHandler.saveProfile(person, this);
         // at this point `person` should have an ID, as well as populated fields
     }

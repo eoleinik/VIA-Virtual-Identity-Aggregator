@@ -266,7 +266,7 @@ final class PersonContract {
         String facebook = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_FACEBOOK));
         String twitter = c.getString(c.getColumnIndexOrThrow(PersonEntry.COLUMN_NAME_TWITTER));
 
-        return new Person(id, timestamp, firstName, lastName, phone, email, address, pictureId, facebook, twitter);
+        return new PersonBuilder().id(id).timestamp(timestamp).firstName(firstName).lastName(lastName).phone(phone).email(email).address(address).picture(pictureId).facebook(facebook).twitter(twitter).buildPerson();
     }
 
     private static void putAllValues(ContentValues values, Person person) {

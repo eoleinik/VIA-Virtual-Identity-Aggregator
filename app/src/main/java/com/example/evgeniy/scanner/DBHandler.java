@@ -42,7 +42,7 @@ class DBHandler {
             String picture = jsonObject.getString("picture");
             String facebook = jsonObject.getString("facebook");
             String twitter = jsonObject.getString("twitter");
-            return new Person(id, timestamp, firstName, lastName, phone, email, address, picture, facebook, twitter);
+            return new PersonBuilder().id(id).timestamp(timestamp).firstName(firstName).lastName(lastName).phone(phone).email(email).address(address).picture(picture).facebook(facebook).twitter(twitter).buildPerson();
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -377,7 +377,7 @@ class DBHandler {
     private static void createNewPerson(final Person person, final Context context) {
         // if no local ID
         RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
-        String url = String.format("http://api.a16_sd206.studev.groept.be/createPerson/%s/%s/%s/%s/%s/%s/%s/%s/%s",
+        String url = String.format("http://api.a16_sd206.studev.groept.be/buildPerson/%s/%s/%s/%s/%s/%s/%s/%s/%s",
                 person.getFirstName(), person.getLastName(),
                 person.getEmail(), person.getPhone(),
                 person.getAddress(), person.getPicture(),

@@ -113,8 +113,6 @@ class Person implements Parcelable {
         return twitter;
     }
 
-    // Parcel stuff
-
     String getPicture() {
         return picture;
     }
@@ -142,6 +140,8 @@ class Person implements Parcelable {
     String getFullName() {
         return getFirstName()+" "+getLastName();
     }
+
+    // Parcel stuff
 
     @Override
     public int describeContents() {
