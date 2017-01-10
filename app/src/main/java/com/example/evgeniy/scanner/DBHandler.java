@@ -377,7 +377,7 @@ class DBHandler {
     private static void createNewPerson(final Person person, final Context context) {
         // if no local ID
         RequestQueue queue = VolleyHandler.getInstance(context).getRequestQueue();
-        String url = String.format("http://api.a16_sd206.studev.groept.be/buildPerson/%s/%s/%s/%s/%s/%s/%s/%s/%s",
+        String url = String.format("http://api.a16_sd206.studev.groept.be/createPerson/%s/%s/%s/%s/%s/%s/%s/%s/%s",
                 person.getFirstName(), person.getLastName(),
                 person.getEmail(), person.getPhone(),
                 person.getAddress(), person.getPicture(),
