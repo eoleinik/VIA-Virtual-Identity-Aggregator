@@ -16,4 +16,5 @@ The QR-code contains your ID and basic info. Another user can scan it in his app
 </p>
 
 Uses [ZebraCrossing](https://github.com/zxing/zxing) library for generating and scanning QR-codes.
+
 Uses Google's [Volley](https://github.com/google/volley) library for making HTTP requests to remote DB.
